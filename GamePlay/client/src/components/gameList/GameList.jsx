@@ -11,6 +11,7 @@ export default function GameList() {
 			.then(result => setGames(result))
 	}, []);
 
+
 	return (
 		<section id="catalog-page">
 			<h1>All Games</h1>
