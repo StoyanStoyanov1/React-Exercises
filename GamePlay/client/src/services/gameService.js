@@ -1,4 +1,4 @@
-import request from '../lib/request.js'
+import  request from '../lib/request.js'
 
 const baseUrl = 'http://localhost:3030/jsonstore/games';
 
@@ -10,16 +10,8 @@ export const getAll = async () => {
 
 }
 export const create = async (gameData) => {
-	const response = await fetch(baseUrl, {
-		method: 'POST',
-		headers: {
-			'content-type': 'application/json',
-		},
-		body: JSON.stringify(gameData)
-
-	});
-
-	const result = await response.json();
+	const result = await request('POST', baseUrl, gameData);
 
 	return result;
 }
+
