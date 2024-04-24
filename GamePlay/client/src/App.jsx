@@ -18,6 +18,7 @@ function App() {
             <Route path='/games' element={<GameList />} />
             <Route path='/games/create' element={<GameCreate />}/>
             <Route path='/login' element={<Login />} />
+            <Route path='logout' element={<Logout />} />
         </Routes>
 
       </div>
