@@ -1,4 +1,9 @@
-import {Routes, Route} from 'react-router-dom'
+import {Routes, Route, useNavigate} from 'react-router-dom';
+import {useState} from "react";
+
+
+import * as authService from './services/authService.js';
+import AuthContext from "./context/authContext.js";
 
 import Header from "./components/header/Header.jsx";
 import Home from "./components/home/Home.jsx";
@@ -7,8 +12,7 @@ import GameCreate from "./components/gameCreate/gameCreate.jsx";
 import Login from "./components/login/Login.jsx";
 import Register from "./components/register/Register.jsx";
 import GameDetails from "./components/gameDetails/GameDetails.jsx";
-import {useState} from "react";
-import AuthContext from "./context/authContext.js";
+import Path from "./paths.js";
 
 
 function Logout() {
@@ -16,10 +20,17 @@ function Logout() {
 }
 
 function App() {
+	const navigate = useNavigate();
+
 	const [auth, setAuth] = useState({})
 
-	const loginSubmitHandler = (values) => {
-		console.log(values)
+	const loginSubmitHandler = async values => {
+
+		const result = await authService.login(values.email, values.password);
+
+		setAuth(result);
+
+		navigate(Path.Home);
 	}
 
 	return (
