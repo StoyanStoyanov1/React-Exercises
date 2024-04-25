@@ -10,3 +10,8 @@ export const login = async (email, password) => {
 
 	return result
 }
+
+export const register =  (email, password) => request('POST', `${baseUrl}/register`, {
+		email,
+		password
+	});
