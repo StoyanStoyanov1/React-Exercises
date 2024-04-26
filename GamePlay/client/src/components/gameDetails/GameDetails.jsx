@@ -15,17 +15,20 @@ export default function GameDetails() {
 
 	const [comments, setComments] = useState([]);
 
-	useEffect( () => {
-		commentService.getAll()
+	useEffect(() => {
+
+		commentService.getAll(gameId)
 			.then(setComments)
-	})
+			.catch(err => console.error('Failed to fetch comments:', err));
+
+	}, [gameId]);
+
 
 	console.log(game)
 	const createCommentSubmitHandler = async (e) => {
 		e.preventDefault();
 
 		const commentData = Object.fromEntries(new FormData(e.currentTarget));
-
 		const commentsDetails = {
 			...commentData,
 			gameTitle: game.title,
@@ -33,14 +36,14 @@ export default function GameDetails() {
 		}
 
 		try {
-			await commentService.create(commentsDetails);
+			const newComment = await commentService.create(commentsDetails);
+			setComments(prevComments => [...prevComments, newComment]);
 		} catch (err) {
-			console.log(err)
+			console.log(err);
 		}
-
 	}
 
-	const filterComments = () => comments.filter(comment => comment.gameId === game._id);
+
 
 	return (
 		<section id="game-details">
@@ -59,14 +62,14 @@ export default function GameDetails() {
 				</p>
 				<div className="details-comments">
 					<h2>Comments:</h2>
-					{filterComments().map(comment => (<ul>
+					{comments.map(comment => (<ul key={comment._id}>
 						<li className="comment">
 							<p>{comment.username}: {comment.comment}</p>
 						</li>
 
 					</ul>))}
 
-					{filterComments().length === 0 && (<p className="no-comment">No comments.</p>)}
+					{comments.length === 0 && (<p className="no-comment">No comments.</p>)}
 
 
 
