@@ -1,6 +1,6 @@
 import useForm from "../../hooks/useForm.js";
 import {useContext} from "react";
-import AuthContext from "../../context/authContext.js";
+import AuthContext from "../../context/authContext.jsx";
 const loginForm = {
 	Email: 'email',
 	Password: 'password',

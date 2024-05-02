@@ -3,7 +3,7 @@ import {useState} from "react";
 
 
 import * as authService from './services/authService.js';
-import AuthContext from "./context/authContext.js";
+import {AuthProvider} from "./context/authContext.jsx";
 
 import Header from "./components/header/Header.jsx";
 import Home from "./components/home/Home.jsx";
@@ -18,51 +18,8 @@ import Path from "./paths.js";
 
 
 function App() {
-	const navigate = useNavigate();
-
-	const [auth, setAuth] = useState(() => {
-		localStorage.removeItem('accessToken');
-
-		return {};
-	})
-
-	const loginSubmitHandler = async values => {
-
-		const result = await authService.login(values.email, values.password);
-
-		setAuth(result);
-		localStorage.setItem('accessToken', result.accessToken)
-		navigate(Path.Home);
-
-	};
-
-	const registerSubmitHandler = async (values) => {
-		console.log(values)
-		const result = await authService.register(values.email, values.password);
-		setAuth(result);
-		localStorage.setItem('accessToken', result.accessToken)
-
-		navigate(Path.Home);
-	};
-
-	const logoutHandler = () => {
-		setAuth({});
-		localStorage.removeItem('accessToken');
-		navigate(Path.Home);
-	}
-
-	const values = {
-		loginSubmitHandler,
-		registerSubmitHandler,
-		logoutHandler,
-		username: auth.username || auth.email,
-		email: auth.email,
-		isAuthenticated: !!auth.email,
-
-	};
-
 	return (
-		<AuthContext.Provider value={values}>
+		<AuthProvider>
 			<div id="box">
 				<Header/>
 
@@ -77,7 +34,7 @@ function App() {
 				</Routes>
 
 			</div>
-		</AuthContext.Provider>
+		</AuthProvider>
 	)
 }
 
