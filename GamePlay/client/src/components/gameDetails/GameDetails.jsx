@@ -1,11 +1,25 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useReducer, useState} from "react";
 import {useParams} from "react-router-dom";
 
 import * as gameService from '../../services/gameService';
 import * as commentService from '../../services/commentService.js'
+import authContext from "../../context/authContext.jsx";
+
+const reducer = (state, action) => {
+	switch (action?.type) {
+		case "GET_ALL_GAMES":
+			return [...action.payload];
+		case "ADD_COMMENT":
+			return [...state, action.payload];
+		default:
+			return state;
+	}
+};
 
 export default function GameDetails() {
+	const { email } = useContext(authContext);
 	const [game, setGame] = useState({});
+	const [comments, dispatch] = useReducer(reducer, []);
 	const {gameId} = useParams();
 
 	useEffect(() => {
@@ -13,18 +27,22 @@ export default function GameDetails() {
 			.then(setGame);
 	}, [gameId]);
 
-	const [comments, setComments] = useState([]);
+	// const [comments, setComments] = useState([]);
 
 	useEffect(() => {
 
 		commentService.getAll(gameId)
-			.then(setComments)
+			.then((result) => {
+				dispatch({
+					type: "GET_ALL_GAMES",
+					payload: result,
+				})
+			})
 			.catch(err => console.error('Failed to fetch comments:', err));
 
 	}, [gameId]);
 
 
-	console.log(game)
 	const createCommentSubmitHandler = async (e) => {
 		e.preventDefault();
 
@@ -33,11 +51,16 @@ export default function GameDetails() {
 			...commentData,
 			gameTitle: game.title,
 			gameId: game._id,
+			author: email,
 		}
 
 		try {
 			const newComment = await commentService.create(commentsDetails);
-			setComments(prevComments => [...prevComments, newComment]);
+			// setComments(prevComments => [...prevComments, newComment]);
+			dispatch({
+				type: 'ADD_COMMENT',
+				payload: newComment,
+			})
 		} catch (err) {
 			console.log(err);
 		}
@@ -64,7 +87,7 @@ export default function GameDetails() {
 					<h2>Comments:</h2>
 					{comments.map(comment => (<ul key={comment._id}>
 						<li className="comment">
-							<p>{comment.username}: {comment.comment}</p>
+							<p>{email}: {comment.comment}</p>
 						</li>
 
 					</ul>))}
@@ -84,12 +107,11 @@ export default function GameDetails() {
 				<article className="create-comment">
 					<label>Add new comment:</label>
 					<form className="form" onSubmit={createCommentSubmitHandler}>
-						<input type="text" name='username' placeholder='Username'/>
 						<textarea name="comment" placeholder="Comment......"></textarea>
 						<input className="btn submit" type="submit" value="Add Comment"/>
 					</form>
 				</article>
 			</div>
-</section>
-)
+		</section>
+	)
 }
