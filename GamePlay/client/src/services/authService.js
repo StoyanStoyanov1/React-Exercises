@@ -17,5 +17,7 @@ export const register = (email, password) => request('POST', `${baseUrl}/registe
 });
 
 export const logout = () => {
-	 return request('GET', `${baseUrl}/logout`);
+	localStorage.removeItem('accessToken');
+
+	return request('GET', `${baseUrl}/logout`);
 }

@@ -1,9 +1,11 @@
-import {useContext, useEffect, useReducer, useState} from "react";
-import {useParams} from "react-router-dom";
+import {useContext, useEffect, useId, useReducer, useState} from "react";
+import {Link, useNavigate, useParams} from "react-router-dom";
 
 import * as gameService from '../../services/gameService';
 import * as commentService from '../../services/commentService.js'
 import authContext from "../../context/authContext.jsx";
+import {pathToUrl} from "../../utils/pathUtils.js";
+import * as Path from "path";
 
 const reducer = (state, action) => {
 	switch (action?.type) {
@@ -17,7 +19,9 @@ const reducer = (state, action) => {
 };
 
 export default function GameDetails() {
-	const { email } = useContext(authContext);
+	const navigate = useNavigate();
+
+	const { email, userId} = useContext(authContext);
 	const [game, setGame] = useState({});
 	const [comments, dispatch] = useReducer(reducer, []);
 	const {gameId} = useParams();
@@ -27,7 +31,6 @@ export default function GameDetails() {
 			.then(setGame);
 	}, [gameId]);
 
-	// const [comments, setComments] = useState([]);
 
 	useEffect(() => {
 
@@ -56,13 +59,22 @@ export default function GameDetails() {
 
 		try {
 			const newComment = await commentService.create(commentsDetails);
-			// setComments(prevComments => [...prevComments, newComment]);
 			dispatch({
 				type: 'ADD_COMMENT',
 				payload: newComment,
 			})
 		} catch (err) {
 			console.log(err);
+		}
+	}
+
+	const deleteButtonClickHandler = async () => {
+		const hasConfirmed = confirm(`Are you sure you want to delete ${game.title}`);
+
+		if (hasConfirmed) {
+			await gameService.remove(gameId);
+
+			navigate('/games');
 		}
 	}
 
@@ -98,10 +110,12 @@ export default function GameDetails() {
 
 				</div>
 
-				{/*<div className="buttons">*/}
-				{/*	<a href="#" className="button">Edit</a>*/}
-				{/*	<a href="#" className="button">Delete</a>*/}
-				{/*</div>*/}
+				{userId === game._ownerId && (
+					<div className="buttons">
+						<Link to={pathToUrl('/games/:gameId/edit', { gameId })} className="button">Edit</Link>
+						<button className="button" onClick={deleteButtonClickHandler}>Delete</button>
+					</div>
+				)}
 
 
 				<article className="create-comment">

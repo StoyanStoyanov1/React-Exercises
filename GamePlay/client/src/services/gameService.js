@@ -21,3 +21,9 @@ export const create = async (gameData) => {
 	return result;
 }
 
+export const edit = async (gameId, gameData) => {
+	const result = await request('PUT',`${baseUrl}/${gameId}`, gameData);
+
+	return result;
+};
+export const remove = async (gameId) => request('DELETE', `${baseUrl}/${gameId}`);
