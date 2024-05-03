@@ -17,6 +17,7 @@ import Path from "./paths.js";
 import GameEdit from "./components/gameEdit/GameEdit.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import BaseAuthGuard from "./components/guards/BaseAuthGuard.jsx";
+import AuthGuard from "./components/guards/AuthGuard.jsx";
 
 
 function App() {
@@ -30,12 +31,15 @@ function App() {
 					<Routes>
 						<Route path={Path.Home} element={<Home/>}/>
 						<Route path='/games' element={<GameList/>}/>
-						<Route path='/games/create' element={<BaseAuthGuard><GameCreate/></BaseAuthGuard>}/>
 						<Route path='/login' element={<Login/>}/>
 						<Route path='/register' element={<Register/>}/>
 						<Route path='/games/:gameId' element={<GameDetails/>}/>
-						<Route path={Path.Logout} element={<Logout/>}/>
-						<Route path={Path.GameEdit} element={<GameEdit/>}/>
+
+						<Route element={AuthGuard}>
+							<Route path={Path.Logout} element={<Logout/>}/>
+							<Route path={Path.GameEdit} element={<GameEdit/>}/>
+							<Route path='/games/create' element={<GameCreate/>}/>
+						</Route>
 					</Routes>
 
 				</div>
