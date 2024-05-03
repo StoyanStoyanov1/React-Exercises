@@ -68,6 +68,8 @@ export default function GameDetails() {
 		}
 	}
 
+
+
 	const deleteButtonClickHandler = async () => {
 		const hasConfirmed = confirm(`Are you sure you want to delete ${game.title}`);
 
