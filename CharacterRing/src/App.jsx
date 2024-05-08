@@ -9,9 +9,17 @@ import CreateCharacter from "./components/createCharacter/CreateCharacter.jsx";
 import EditCharacter from "./components/editCharacter/EditCharacter.jsx";
 import DetailsCharacter from "./components/characters/detailsCharacter/DetailsCharacter.jsx";
 import Footer from "./components/footer/Footer.jsx";
+import {AuthProvider} from "./context/AuthContext.jsx";
+
+
+function AuthContext(props) {
+	return null;
+}
+
 
 function App() {
 	return (
+		<AuthProvider>
 		<div id='wrapper'>
 			<Header/>
 				<Routes>
@@ -24,7 +32,9 @@ function App() {
 					<Route path={Path.DetailsCharacter} element={<DetailsCharacter/>}/>
 				</Routes>
 			<Footer/>
+
 		</div>
+		</AuthProvider>
 	)
 }
 
