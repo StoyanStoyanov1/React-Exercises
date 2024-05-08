@@ -8,6 +8,7 @@ import Login from "./components/login/Login.jsx";
 import CreateCharacter from "./components/createCharacter/CreateCharacter.jsx";
 import EditCharacter from "./components/editCharacter/EditCharacter.jsx";
 import DetailsCharacter from "./components/characters/detailsCharacter/DetailsCharacter.jsx";
+import Footer from "./components/footer/Footer.jsx";
 
 function App() {
 	return (
@@ -22,10 +23,8 @@ function App() {
 					<Route path={Path.EditCharacter} element={<EditCharacter />}/>
 					<Route path={Path.DetailsCharacter} element={<DetailsCharacter/>}/>
 				</Routes>
-
-
+			<Footer/>
 		</div>
-
 	)
 }
 
