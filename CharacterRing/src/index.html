@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=\, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles/styles.css" />
+    <title>Elden Ring Explorer</title>
+  </head>
+  <body>
+    <div id="wrapper">
+      <header>
+        <!-- Navigation -->
+        <a id="logo" href="/"><img id="logo-img" src="./images/logo.png" alt=""/></a>
+        <nav>
+          <div>
+            <a href="#">Characters</a>
+          </div>
+
+          <!-- Logged-in users -->
+          <div class="user">
+            <a href="#">Add Character</a>
+            <a href="#">Logout</a>
+          </div>
+
+          <!-- Guest users -->
+          <div class="guest">
+            <a href="#">Login</a>
+            <a href="#">Register</a>        
+          </div>
+        </nav>
+      </header>
+
+      <main>
+        <!-- Home page -->
+        
+        <section id="hero">
+          <h1>Welcome to Elden Ring Explorer, your gateway
+             to the mystical world of Elden Ring! Embark
+              on an epic journey through a land shrouded
+               in myth and mystery. Whether you're a seasoned
+                adventurer or new to this realm, our app will
+                 guide you through the wonders and challenges
+                  that await in this extraordinary game world</h1>
+                  <img id="hero-img" src="./images/hero.png" alt="hero">
+        </section>
+
+        <!-- Dashboard page -->
+        <h2>Characters</h2>
+        <section id="characters">
+          <!-- Display a div with information about every post (if any)-->
+          <div class="character">
+            <img src="./images/hero 1.png" alt="example1" />
+            <div class="hero-info">
+              <h3 class="category">Hero</h3>
+              <p class="description">Choosing the Hero means you'll be focusing on 
+                all-out strength with this Elden Ring class. Serving as the opposite
+                 to the Warrior class, Hero players will use heavier weapons with slow
+                  attacks that deal massive damage.</p>
+              <a class="details-btn" href="#">More Info</a>
+            </div>
+            
+          </div>
+          <div class="character">
+            <img src="./images/hero 2.png" alt="example2" />
+            <div class="hero-info">
+              <h3 class="category">Astrologer</h3>
+              <p class="description">The Elden Ring Astrologer class is one of the few options
+                 built for magic from the start, with an impressive 15 Mind and 16 Intelligence
+                  stats.Astrologers will be able to cast many powerful Sorcery spells for single and 
+                  multiple targets.
+                </p>
+              <a class="details-btn" href="">More Info</a>
+            </div>
+            
+          </div><div class="character">
+            <img src="./images/hero 3.png" alt="example3" />
+            <div class="hero-info">
+              <h3 class="category">Bandit</h3>
+              <p class="description">The Bandit class is Elden Ring's
+                 stealth assassin. With a dagger and a small shield,
+                  Bandit players need to avoid direct conflict with 
+                  groups of enemies and should instead focus on critical
+                   hits with backstabs or sniping with the starting Short Bow.</p>
+              <a class="details-btn" href="#">More Info</a>
+            </div>
+           
+          </div>
+          
+        </section>
+         <!-- Display an h2 if there are no posts -->
+         <h2>No added Heroes yet.</h2>
+
+        <!-- Register Page (Only for Guest users) -->
+        <section id="register">
+          
+          <div class="form">
+            <img class="border" src="./images/border.png" alt="">
+            <h2>Register</h2>
+            <form class="register-form">
+              <input
+                type="text"
+                name="email"
+                id="register-email"
+                placeholder="email"
+              />
+              <input
+                type="password"
+                name="password"
+                id="register-password"
+                placeholder="password"
+              />
+              <input
+                type="password"
+                name="re-password"
+                id="repeat-password"
+                placeholder="repeat password"
+              />
+              <button type="submit">register</button>
+              <p class="message">Already registered? <a href="#">Login</a></p>
+            </form>
+            <img class="border" src="./images/border.png" alt="">
+          </div>
+         
+        </section>
+
+        <!-- Login Page (Only for Guest users) -->
+        <section id="login">
+          <div class="form">
+            <img class="border" src="./images/border.png" alt="">
+            <h2>Login</h2>
+            <form class="login-form">
+              <input type="text" name="email" id="email" placeholder="email" />
+              <input
+                type="password"
+                name="password"
+                id="password"
+                placeholder="password"
+              />
+              <button type="submit">login</button>
+              <p class="message">
+                Not registered? <a href="#">Create an account</a>
+              </p>
+            </form>
+            <img class="border" src="./images/border.png" alt="">
+          </div>
+        </section>
+
+        <!-- Create Page (Only for logged-in users) -->
+        <section id="create">
+          <div class="form">
+            <img class="border" src="./images/border.png" alt="">
+            <h2>Add Character</h2>
+            <form class="create-form">
+              <input
+                type="text"
+                name="category"
+                id="category"
+                placeholder="Character Type"
+              />
+              <input
+                type="text"
+                name="image-url"
+                id="image-url"
+                placeholder="Image URL"
+              />
+              <textarea
+              id="description"
+              name="description"
+              placeholder="Description"
+              rows="2"
+              cols="10"
+            ></textarea>
+            <textarea
+              id="additional-info"
+              name="additional-info"
+              placeholder="Additional Info"
+              rows="2"
+              cols="10"
+            ></textarea>
+              <button type="submit">Add Character</button>
+            </form>
+            <img class="border" src="./images/border.png" alt="">
+          </div>
+        </section>
+        <!-- Edit Page (Only for logged-in users) -->
+        <section id="edit">
+          <div class="form">
+            <img class="border" src="./images/border.png" alt="">
+            <h2>Edit Character</h2>
+            <form class="edit-form">
+              <input
+              type="text"
+              name="category"
+              id="category"
+              placeholder="Character Type"
+            />
+            <input
+              type="text"
+              name="image-url"
+              id="image-url"
+              placeholder="Image URL"
+            />
+            <textarea
+            id="description"
+            name="description"
+            placeholder="Description"
+            rows="2"
+            cols="10"
+          ></textarea>
+          <textarea
+            id="additional-info"
+            name="additional-info"
+            placeholder="Additional Info"
+            rows="2"
+            cols="10"
+          ></textarea>
+              <button type="submit">Edit</button>
+            </form>
+            <img class="border" src="./images/border.png" alt="">
+          </div>
+        </section>
+        
+        <!-- Details page -->
+        <section id="details">
+          <div id="details-wrapper">
+            <img id="details-img" src="./images/hero 1.png" alt="example1" />
+            <div>
+            <p id="details-category">Hero</p>
+            <div id="info-wrapper">
+              <div id="details-description">
+                <p id="description">
+                  Choosing the Hero means you'll be focusing on 
+                all-out strength with this Elden Ring class. Serving as the opposite
+                 to the Warrior class, Hero players will use heavier weapons with slow
+                  attacks that deal massive damage.
+                  </p>
+                   <p id ="more-info">
+                    Elden Ring Heroes start off with good Vigor
+                     and Endurance, so more HP and Stamina,
+                      meaning they're at least a little tanky
+                       and agile too. You can boost these Attributes
+                        more in the early levels to make the Hero more
+                         balanced or can focus purely on Strength to up
+                          your damage as much as you can.
+                        </p>
+              </div>
+            </div>
+              <h3>Is This Useful:<span id="likes">0</span></h3>
+
+               <!--Edit and Delete are only for creator-->
+          <div id="action-buttons">
+            <a href="" id="edit-btn">Edit</a>
+            <a href="" id="delete-btn">Delete</a>
+
+             <!--Bonus - Only for logged-in users ( not authors )-->
+            <a href="" id="like-btn">Like</a>
+
+          </div>
+            </div>
+        </div>
+      </section>
+      </main>
+    </div>
+    <footer>
+      <p>Character Ring</p>
+    </footer>
+  </body>
+</html>
