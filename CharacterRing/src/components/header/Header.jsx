@@ -1,6 +1,5 @@
 import {Link} from "react-router-dom";
 import Path from '../../paths.js'
-import CreateCharacter from "../createCharacter/CreateCharacter.jsx";
 import {useContext} from "react";
 import AuthContext from "../../context/AuthContext.jsx";
 export default function Header() {

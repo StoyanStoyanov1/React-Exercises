@@ -12,13 +12,9 @@ import Footer from "./components/footer/Footer.jsx";
 import {AuthProvider} from "./context/AuthContext.jsx";
 
 
-function AuthContext(props) {
-	return null;
-}
-
-
 function App() {
 	return (
+
 		<AuthProvider>
 		<div id='wrapper'>
 			<Header/>

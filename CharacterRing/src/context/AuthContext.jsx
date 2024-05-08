@@ -1,24 +1,26 @@
-import {createContext} from "react";
+import {createContext, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import * as authServer from '../../../GamePlay/client/src/services/authService.js';
+import * as authServer from '../services/authService.js';
 import Path from '../paths.js';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({children,}) => {
+	const [auth, setAuth] = useState({});
 
 	const navigate = useNavigate();
 
 	const registerSubmitHandler = async (values) => {
-		const result = await authServer.register('POST', values.email, values.password);
+		const result = await authServer.register(values.email, values.password);
 
 		localStorage.setItem('accessToken', result.accessToken);
+		setAuth(result);
 
 		navigate(Path.Home)
 	}
 
 	const loginSubmitHandler = async (values) => {
-		const result = await authServer.login('POST', values.email, values.password);
+		const result = await authServer.login(values.email, values.password);
 
 		localStorage.setItem('accessToken', result.accessToken);
 
@@ -30,8 +32,6 @@ export const AuthProvider = ({children,}) => {
 
 		navigate(Path.Home);
 	}
-
-	const auth = JSON.parse(localStorage.getItem('accessToken')) || {};
 
 	const values = {
 		loginSubmitHandler,
