@@ -13,8 +13,8 @@ export const AuthProvider = ({children,}) => {
 	const registerSubmitHandler = async (values) => {
 		const result = await authServer.register(values.email, values.password);
 
-		localStorage.setItem('accessToken', result.accessToken);
 		setAuth(result);
+		localStorage.setItem('accessToken', result.accessToken);
 
 		navigate(Path.Home)
 	}
@@ -22,6 +22,7 @@ export const AuthProvider = ({children,}) => {
 	const loginSubmitHandler = async (values) => {
 		const result = await authServer.login(values.email, values.password);
 
+		setAuth(result);
 		localStorage.setItem('accessToken', result.accessToken);
 
 		navigate(Path.Home)
@@ -29,6 +30,7 @@ export const AuthProvider = ({children,}) => {
 
 	const logoutHandler = async () => {
 		localStorage.removeItem('accessToken');
+		setAuth({});
 
 		navigate(Path.Home);
 	}

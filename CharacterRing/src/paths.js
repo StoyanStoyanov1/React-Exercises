@@ -6,6 +6,7 @@ const Path = {
 	CreateCharacter: '/create-character',
 	EditCharacter: '/edit-character',
 	DetailsCharacter: '/details-character',
+	Logout: '/logout'
 };
 
 export default Path;

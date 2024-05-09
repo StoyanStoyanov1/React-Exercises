@@ -17,7 +17,7 @@ export default function Header() {
 				</div>
 				{isAuthenticated && (<div className="user">
 					<Link to={Path.CreateCharacter}>Add Character</Link>
-					<Link to="#">Logout</Link>
+					<Link to={Path.Logout}>Logout</Link>
 				</div>)}
 
 				{!isAuthenticated && (<div className="guest">
