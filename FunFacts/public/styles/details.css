@@ -1,6 +1,5 @@
 #details-wrapper {
-  display: flex;
-  background-color: rgb(131, 128, 114);
+  background-color: rgb(242, 236, 236);
   margin: 50px auto;
   height: 75%;
   width: 80%;
@@ -11,7 +10,7 @@
 #details-wrapper img {
   display: block;
   margin:  auto;
-  height: 45vh;
+  height: 35vh;
   width: 60vh;
 }
 #details-img{
@@ -35,28 +34,21 @@
 
 h4 {
   text-align: center;
-  color: rgb(255, 215, 0);
-  text-shadow: 1px 1px rgb(0, 0, 0);
 }
 
 p {
   text-align: center;
-  font-size: 16px;
-  color: rgb(255, 215, 0);
-  text-shadow: 1px 1px rgb(0, 0, 0);
+  font-size: 14px;
 }
 
 span {
   font-size: 22px;
-  color: rgb(255, 215, 0);
-  text-shadow: 1px 1px rgb(0, 0, 0);
 }
 
 #action-buttons {
   display: flex;
   justify-content: center;
   margin-bottom: 5px;
-  
   
 }
 
@@ -67,8 +59,9 @@ span {
   font-size: 21px;
   width: 130px;
   text-align: center;
-  color: rgb(255, 215, 0);
-  background: rgb(29, 28, 28);
+  color: white;
+  background: rgb(255, 10, 10);
+  text-shadow: 1px 1px black;
   border-radius: 5px;
 }
 #action-buttons a:hover {
@@ -78,6 +71,4 @@ span {
 #details h3{
   text-align: center;
   letter-spacing: 6px;
-  color: rgb(255, 215, 0);
-  text-shadow: 1px 1px rgb(0, 0, 0);
   }

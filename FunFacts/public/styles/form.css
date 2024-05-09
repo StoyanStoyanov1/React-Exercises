@@ -1,8 +1,4 @@
-@font-face {
-  font-family: 'YourCustomFont';
-  src: url('./Mantinia\ Regular.otf') format('opentype');
-}
-
+@import url(https://fonts.googleapis.com/css?family=Roboto:300);
 
 .login-page {
   width: 360px;
@@ -10,29 +6,31 @@
   margin: auto;
 }
 .form {
-  background-color: rgb(131, 128, 114);
+  background-color: rgb(245, 212, 212);
   max-width: 440px;
   margin: auto;
-  margin-top: -90px;
-  /* margin-bottom: 50px; */
+  margin-top: 50px;
+  margin-bottom: 50px;
   padding: 45px;
   text-align: center;
   border-radius: 10px;
-  box-shadow: -2px 2px 21px 14px rgba(0,0,0,1);
+  border: 1px solid;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
 }
 
 .form h2 {
   margin-bottom: 50px;
   font-size: 30px;
-  color: rgb(255, 215, 0);
+  color: rgb(255, 0, 0);
 }
 
 .form input{
   border-radius: 10px;
- border: 1px solid black;
+  outline: 0;
   background: #ffffff;
   width: 100%;
   height: 50px;
+  border: 0;
   margin: 0 0 15px;
   padding: 15px;
   box-sizing: border-box;
@@ -50,26 +48,25 @@
 
 }
 .form button {
+  font-family: 'Alkalami', serif;
+  font-family: 'Kaushan Script', cursive;
   text-transform: uppercase;
   outline: 0;
-  background: #ede43d;
- 
+  background: rgb(252, 9, 9);
+  text-shadow: 1px 1px black;
   width: 100%;
   border: 0;
   padding: 15px;
-  color: #000000;
+  color: #ffffff;
   font-size: 14px;
   cursor: pointer;
   border-radius: 5px;
-  border: 1px solid black;
-  font-family: 'YourCustomFont';
-  font-weight: 600;
   
 }
 .form button:hover,
 .form button:active,
 .form button:focus {
-  background: rgb(192, 233, 105);
+  background: #bd2c2c;
 }
 
 .container {
@@ -91,32 +88,25 @@
   font-size: 17px;
 }
 .form .message a {
-  color: #ede43d;
+  color: #bd2c2c;
   text-decoration: none;
-  text-shadow: 1px 1px black;
-  font-size: 18px;
 }
 
 #search .form h2{
 margin-top:-40px;
 margin-bottom: 0px;
   font-size: 30px;
-    background: #ede43d;
+  color: rgb(190, 103, 2);
 }
-
+.search-result > .fruit {
+  scale: 0.5;
+}
+.search-result {
+  margin-top: -50px;
+  display: flex;
+}
 
 .no-result {
   margin-top: 8rem;
   font-size: 30px;
-}
-
-#edit , #create, #login , #register {
-  scale: 0.72;
-}
-
-.border{
-  height: 38px;
-  margin-bottom: 20px;
-  margin-top: 20px;
-  margin-left: -100px;
 }

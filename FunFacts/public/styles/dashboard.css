@@ -1,56 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
-
-#characters {
+#dashboard {
+  margin:0px 50px;
   display: flex;
   align-items: center;
   justify-content:center ;
   flex-wrap: wrap;
-  margin-top: -20px;
 
 }
  h2 {
   text-align: center;
   font-size: 50px;
-  color: rgb(255, 215, 0);
-  text-shadow: 2px 2px black;
+  color: rgb(241, 10, 10);
+  text-shadow: 1px 1px black;
   margin-top: -20px;
 }
 
-
-.character {
+.fact {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: row;
-  width: 27vw;
-  height: 60vh;
+  flex-direction: column;
+  width: 25vw;
+  height: 50vh;
   padding-bottom: 1rem;
-  margin: 10px auto;
-  background-color: rgb(131, 128, 114);
-  border-radius: 22px;
-  border: 4px solid rgb(2, 2, 2);
+  margin: 20px auto;
+  background-color: rgb(244, 230, 230);
+  border-radius: 5px;
+  border: 2px solid rgb(253, 10, 10);
   box-shadow: -4px 3px 25px 1px rgba(0,0,0,0.55);
 -webkit-box-shadow: -4px 3px 25px 1px rgba(0,0,0,0.55);
 -moz-box-shadow: -4px 3px 25px 1px rgba(0,0,0,0.55);
  
 }
 
-.character img {
-  height:50vh;
-}
-.hero-info{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  width: 12vw;
+.fact img {
+  height:22vh;
+  width: 16vw;
+  margin-top: 20px;
+  border-radius: 5px; 
 }
 
-.character .category {
+.fact .category {
+  margin: 0;
   letter-spacing: 2px;
-  color: rgb(255, 215, 0);
-  text-shadow: 1px 1px rgb(0, 0, 0);
-
+  color: rgb(95, 94, 94);
+  text-decoration: underline;
 }
 
 .details-btn {
@@ -60,46 +55,20 @@
   width: 160px;
   border-radius: 3px;
   text-align: center;
-  color: rgb(255, 215, 0);
-  background: rgb(29, 28, 28);
+  color: white;
+  background: rgb(240, 47, 47);
   text-shadow: 1px 1px black;
 }
 .details-btn:hover {
   background: #bd2c2c;
 }
-.character p {
+.fact p {
   margin: auto;
-  font-size: 13px;
+  font-size: 0.8rem;
   font-weight: 500;
   width: 90%;
   text-align: center;
-  color: rgb(255, 215, 0);
-  text-shadow: 1px 1px rgb(0, 0, 0);
+  color: rgb(24, 23, 23);
+  font-family: 'Roboto', sans-serif;
 }
 
-@media (max-width: 1000px) {
-  h2 {
-    font-size: 25px; 
-  }
-
-  .character {
-    width: 40%; 
-  }
-
-  .hero-info {
-    width: 40%;
-  }
-
-  .details-btn {
-    font-size: 12px; 
-    width: 50px;
-  }
-
-  .character p {
-    font-size: 9px; 
-  }
-
-  .character img {
-    height:25vh;
-  }
-}
