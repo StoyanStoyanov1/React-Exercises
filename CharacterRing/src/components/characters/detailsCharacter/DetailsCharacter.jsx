@@ -1,30 +1,33 @@
-import {Link} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import Login from "../../login/Login.jsx";
 import EditCharacter from "../../editCharacter/EditCharacter.jsx";
 import Path from "../../../paths.js";
+import {useEffect, useState} from "react";
+import * as characterService from "../../../services/characterService.js"
 export default function DetailsCharacter() {
+	const {characterId} = useParams()
+
+	const [character, setCharacter] = useState({});
+
+	useEffect(() => {
+		characterService.getOne(characterId)
+			.then(setCharacter)
+	}, [characterId]);
+
+	console.log(character)
 	return (
 		<section id="details">
 			<div id="details-wrapper">
-				<img id="details-img" src="./images/hero 1.png" alt="example1" />
+				<img id="details-img" src={character.imageUrl} alt={character.category}/>
 				<div>
 					<p id="details-category">Hero</p>
 					<div id="info-wrapper">
 						<div id="details-description">
 							<p id="description">
-								Choosing the Hero means you'll be focusing on
-								all-out strength with this Elden Ring class. Serving as the opposite
-								to the Warrior class, Hero players will use heavier weapons with slow
-								attacks that deal massive damage.
+								{character.description}
 							</p>
 							<p id ="more-info">
-								Elden Ring Heroes start off with good Vigor
-								and Endurance, so more HP and Stamina,
-								meaning they're at least a little tanky
-								and agile too. You can boost these Attributes
-								more in the early levels to make the Hero more
-								balanced or can focus purely on Strength to up
-								your damage as much as you can.
+								{character['additional-info']}
 							</p>
 						</div>
 					</div>

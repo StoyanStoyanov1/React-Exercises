@@ -32,8 +32,8 @@ export default function CreateCharacter() {
 					/>
 					<input
 						type="text"
-						name="image-url"
-						id="image-url"
+						name="imageUrl"
+						id="imageUrl"
 						placeholder="Image URL"
 					/>
 					<textarea

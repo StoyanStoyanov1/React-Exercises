@@ -7,3 +7,15 @@ export const createCharacter = async (dataCharacter) => {
 
 	return result;
 }
+
+export const getAll = async () => {
+	const result = await request('GET', baseUrl);
+
+	return result;
+}
+
+export const getOne = async (id) => {
+	const result = await request('GET', `${baseUrl}/${id}`);
+
+	return result
+}

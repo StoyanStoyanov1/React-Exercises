@@ -28,7 +28,7 @@ function App() {
 					<Route path={Path.Login} element={<Login/>}/>
 					<Route path={Path.CreateCharacter} element={<CreateCharacter/>}/>
 					<Route path={Path.EditCharacter} element={<EditCharacter />}/>
-					<Route path={Path.DetailsCharacter} element={<DetailsCharacter/>}/>
+					<Route path={`${Path.DetailsCharacter}/:characterId`} element={<DetailsCharacter/>}/>
 					<Route path={Path.Logout} element={<Logout/>}/>
 				</Routes>
 
