@@ -1,8 +1,11 @@
 import {Link} from "react-router-dom";
 import Path from "../../paths.js";
-import Login from "../login/Login.jsx";
+import {useContext} from "react";
+import authContext from "../../context/AuthContext.jsx";
 
 export default function Header() {
+	const {email, isAuthenticated} = useContext(authContext);
+
 	return (
 		<header>
 			<Link id="logo" to={Path.Home}
@@ -14,16 +17,14 @@ export default function Header() {
 					<Link to={Path.FunFacts}>Fun Facts</Link>
 				</div>
 
-				<div className="user">
+				{isAuthenticated && <div className="user">
 					<Link to={Path.CreateFunFact}>Add Fact</Link>
-					<a href="#">Logout</a>
-				</div>
-
-				<div className="guest">
+					<Link to={Path.Logout}>Logout</Link>
+					<span>| {email}</span>
+				</div> || <div className="guest">
 					<Link to={Path.Login}>Login</Link>
-					<Link to={Path.Register}>Register</Link>
+					<Link to={Path.Register}>Register</Link></div>}
 
-				</div>
 			</nav>
 		</header>
 

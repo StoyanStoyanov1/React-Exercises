@@ -1,22 +1,21 @@
-const baseUrl = 'http://localhost:3030/users';
-
 import request from "../lib/request.js";
 
-export const login = async (email, password) => {
-	const result = await request('POST', `${baseUrl}/login}`, {
-		email,
-		password,
-	}) ;
-
-	return result;
-}
+const baseUrl = 'http://localhost:3030/users';
 
 export const register = async (email, password) => {
-	const result = await request('POST', `${baseUrl}/register`, {
-		email,
-		password
-	});
 
-	return result;
+	return await request("POST", `${baseUrl}/register`, {
+		email,
+		password,
+	})
+
+};
+
+export const login = async (email, password) => {
+	return await request("POST", `${baseUrl}/login`, {
+		email,
+		password,
+	});
 }
 
+export const logout = async () => request('GET', `${baseUrl}/logout`);
