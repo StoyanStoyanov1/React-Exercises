@@ -1,9 +1,30 @@
+import {useNavigate} from "react-router-dom";
+import * as funFactServer from '../../servers/funFactServer.js'
+import Path from "../../paths.js";
+
+
 export default function CreateFunFact() {
+	const navigation = useNavigate();
+
+	const createSubmitHandler = async (e) => {
+		e.preventDefault();
+
+		const data = Object.fromEntries(new FormData(e.currentTarget));
+
+		try {
+			await funFactServer.create(data);
+
+			navigation(Path.FunFacts)
+		} catch (err) {
+			console.log(`Failed to create a new FunFact: ${err}`);
+		}
+	}
+
 	return (
 		<section id="create">
 			<div className="form">
 				<h2>Add Fact</h2>
-				<form className="create-form">
+				<form className="create-form" onSubmit={createSubmitHandler}>
 					<input
 						type="text"
 						name="category"
