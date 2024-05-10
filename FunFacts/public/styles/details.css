@@ -52,7 +52,8 @@ span {
   
 }
 
-#action-buttons a {
+#action-buttons a,
+#action-buttons button{
   text-decoration: none;
   margin: auto 50px;
   margin-bottom: 10px;
@@ -64,9 +65,11 @@ span {
   text-shadow: 1px 1px black;
   border-radius: 5px;
 }
-#action-buttons a:hover {
+#action-buttons a:hover,
+#action-buttons button:hover{
   background: #bd2c2c;
 }
+
 
 #details h3{
   text-align: center;

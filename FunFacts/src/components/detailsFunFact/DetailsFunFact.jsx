@@ -1,15 +1,34 @@
-import {useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {Link, useParams} from "react-router-dom";
+import {useContext, useEffect, useState} from "react";
 import {getOne} from "../../servers/funFactServer.js";
+import authContext from "../../context/AuthContext.jsx";
 
 export default function DetailsFunFact() {
 	const {factId} = useParams();
 
+	const {userId} = useContext(authContext)
 	const [fact, setFact] = useState({});
+	const [likeCount, setLikeCount] = useState(0);
+	const [isLiked, setIsLiked] = useState(false);
+
+	const clickLikeButton = () => {
+
+		if (!isLiked) {
+			setLikeCount(likeCount + 1);
+			setIsLiked(true);
+		} else {
+			setLikeCount(likeCount - 1);
+			setIsLiked(false);
+		}
+
+	}
 
 	useEffect(() => {
-		getOne(factId).then(result => setFact(result));
-	}, []);
+		getOne(factId).then(result => {
+			setFact(result);
+			setLikeCount(result.likes || 0)
+		});
+	}, [factId]);
 
 	return (
 		<section id="details">
@@ -26,15 +45,22 @@ export default function DetailsFunFact() {
 						</p>
 					</div>
 
-					<h3>Likes:<span id="likes">0</span></h3>
+					<h3>Likes:<span id="likes">{likeCount}</span></h3>
+					{userId === fact._ownerId && (<div id="action-buttons">
 
-					<div id="action-buttons">
-						<a href="" id="edit-btn">Edit</a>
-						<a href="" id="delete-btn">Delete</a>
+						<Link to="" id="edit-btn">Edit</Link>
+						<Link to="" id="delete-btn">Delete</Link>
 
-						<a href="" id="like-btn">Like</a>
 
-					</div>
+					</div>)}
+
+					{userId !== fact._ownerId && (
+						<div id="action-buttons">
+							<button onClick={clickLikeButton} id="like-btn">{isLiked ? 'Dislike': 'Like'}</button>
+						</div>
+					)}
+
+
 				</div>
 			</div>
 		</section>
