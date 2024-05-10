@@ -1,38 +1,28 @@
+import {useNavigate} from "react-router-dom";
+import * as funFactServer from '../../servers/funFactServer.js'
+import ItemFunFacts from "./ItemFunFacts.jsx";
+import {useEffect, useState} from "react";
+
+
 export default function FunFacts() {
+	const [facts, setFacts] = useState([]);
+
+	useEffect(() => {
+		funFactServer.getAll().then(result => setFacts(result));
+	}, []);
+
 	return (
 		<>
-		<h2>Fun Facts</h2>
-	<section id="dashboard">
-		<div className="fact">
-			<img src="./images/fact 1.png" alt="example1" />
-			<h3 className="category">History</h3>
-			<p className="description">Uncover the intriguing tale of the shortest war in history!
-				The Anglo-Zanzibar War of 1896 lasted a mere 38 minutes,
-				making it an astonishingly brief conflict that's sure to leave
-				you amazed by the brevity of battle.</p>
-			<a className="details-btn" href="">More Info</a>
-		</div>
-		<div className="fact">
-			<img src="./images/fact 2.jpg" alt="example2" />
-			<h3 className="category">Science</h3>
-			<p className="description">Did you know that the Earth's oceans contain enough salt to cover
-				all the continents in a layer 500 feet thick?
-				Dive into the depths of this salty fact and explore the wonders
-				of our planet's aquatic wonders.</p>
-			<a className="details-btn" href="">More Info</a>
-		</div><div className="fact">
-		<img src="./images/fact 3.jpg" alt="example3" />
-		<h3 className="category">Nature</h3>
-		<p className="description">Prepare to be astounded by the power of hummingbirds!
-			These tiny marvels can flap their wings up to 80 times per second,
-			enabling them to hover, fly backward, and even upside down.
-			Discover more about these delightful creatures and their
-			extraordinary abilities.</p>
-		<a className="details-btn" href="">More Info</a>
-	</div>
+			<h2>Fun Facts</h2>
+			<section id="dashboard">
+				{facts.map(fact => (
+					<ItemFunFacts key={fact._id} {...fact}/>
+				))}
 
-	</section>
-	<h2>No Fun Facts yet.</h2>
+			</section>
+
+			{facts.length === 0 && <h2>No Fun Facts yet.</h2>}
+
 		</>
 	)
 }

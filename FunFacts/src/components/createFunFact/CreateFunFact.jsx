@@ -33,7 +33,7 @@ export default function CreateFunFact() {
 					/>
 					<input
 						type="text"
-						name="image-url"
+						name="imageUrl"
 						id="image-url"
 						placeholder="Image URL"
 					/>
@@ -46,7 +46,7 @@ export default function CreateFunFact() {
 					></textarea>
 					<textarea
 						id="additional-info"
-						name="additional-info"
+						name="additionalInfo"
 						placeholder="Additional Info"
 						rows="10"
 						cols="50"

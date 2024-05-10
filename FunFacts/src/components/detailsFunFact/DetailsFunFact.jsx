@@ -1,27 +1,28 @@
+import {useParams} from "react-router-dom";
+import {useEffect, useState} from "react";
+import {getOne} from "../../servers/funFactServer.js";
+
 export default function DetailsFunFact() {
+	const {factId} = useParams();
+
+	const [fact, setFact] = useState({});
+
+	useEffect(() => {
+		getOne(factId).then(result => setFact(result));
+	}, []);
+
 	return (
 		<section id="details">
 			<div id="details-wrapper">
-				<img id="details-img" src="./images/fact 1.png" alt="example1"/>
+				<img id="details-img" src={fact.imageUrl} alt="example1"/>
 				<p id="details-category">History</p>
 				<div id="info-wrapper">
 					<div id="details-description">
 						<p id="description">
-							Uncover the intriguing tale of the shortest war in history!
-							The Anglo-Zanzibar War of 1896 lasted a mere 38 minutes,
-							making it an astonishingly brief conflict that's sure to
-							leave you amazed by the brevity of battle.
+							{fact.description}
 						</p>
 						<p id="more-info">
-							The Anglo-Zanzibar War, which occurred on
-							August 27, 1896, goes down in history as
-							the shortest recorded war. It lasted a mere 38 minutes!
-							The conflict erupted when Sultan Khalid bin Barghash of
-							Zanzibar refused to step down after the death of his predecessor.
-							British warships bombarded the palace, quickly overwhelming
-							the sultan's forces and forcing his surrender. This incredible
-							piece of history serves as a reminder of how swiftly events
-							can unfold, leaving a lasting impact in the annals of time.
+							{fact.additionalInfo}
 						</p>
 					</div>
 

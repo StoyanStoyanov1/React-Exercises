@@ -25,7 +25,7 @@ function App() {
 					<Route path={Path.Register} element={<Register/>}/>
 					<Route path={Path.Login} element={<Login/>}/>
 					<Route path={Path.CreateFunFact} element={<CreateFunFact/>}/>
-					<Route path={Path.DetailsFunFact} element={<DetailsFunFact/>}/>
+					<Route path={`${Path.DetailsFunFact}/:factId`} element={<DetailsFunFact/>}/>
 					<Route path={Path.Logout} element={<Logout/>}/>
 				</Routes>
 
