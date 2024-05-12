@@ -12,6 +12,7 @@ import CreateFunFact from "./components/createFunFact/CreateFunFact.jsx";
 import DetailsFunFact from "./components/detailsFunFact/DetailsFunFact.jsx";
 import Footer from "./components/footer/Footer.jsx";
 import Logout from "./components/logout/Logout.jsx";
+import EditFunFact from "./components/editFunFact/EditFunFact.jsx";
 
 function App() {
 	return (
@@ -27,6 +28,7 @@ function App() {
 					<Route path={Path.CreateFunFact} element={<CreateFunFact/>}/>
 					<Route path={`${Path.DetailsFunFact}/:factId`} element={<DetailsFunFact/>}/>
 					<Route path={Path.Logout} element={<Logout/>}/>
+					<Route path={`${Path.EditFunFact}/:factId`} element={<EditFunFact />}/>
 				</Routes>
 
 				<Footer/>

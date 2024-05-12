@@ -2,6 +2,7 @@ import {Link, useParams} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
 import {edit, getOne} from "../../servers/funFactServer.js";
 import authContext from "../../context/AuthContext.jsx";
+import Path from "../../paths.js";
 
 export default function DetailsFunFact() {
 
@@ -52,7 +53,7 @@ export default function DetailsFunFact() {
 					<h3>Likes:<span id="likes">{allLikes.length}</span></h3>
 					{userId === fact._ownerId && (<div id="action-buttons">
 
-						<Link to="" id="edit-btn">Edit</Link>
+						<Link to={`${Path.EditFunFact}/${factId}`} id="edit-btn">Edit</Link>
 						<Link to="" id="delete-btn">Delete</Link>
 
 
