@@ -1,4 +1,4 @@
-import {Routes, Route} from 'react-router-dom'
+import {Routes, Route, RouterProvider} from 'react-router-dom'
 
 import Path from "./paths.js";
 import {AuthProvider} from './context/AuthContext.jsx'
@@ -13,6 +13,7 @@ import DetailsFunFact from "./components/detailsFunFact/DetailsFunFact.jsx";
 import Footer from "./components/footer/Footer.jsx";
 import Logout from "./components/logout/Logout.jsx";
 import EditFunFact from "./components/editFunFact/EditFunFact.jsx";
+import RemoveFunFact from "./components/removeFunFact/RemoveFunFact.jsx";
 
 function App() {
 	return (
@@ -29,6 +30,7 @@ function App() {
 					<Route path={`${Path.DetailsFunFact}/:factId`} element={<DetailsFunFact/>}/>
 					<Route path={Path.Logout} element={<Logout/>}/>
 					<Route path={`${Path.EditFunFact}/:factId`} element={<EditFunFact />}/>
+					<Route path={`${Path.RemovePath}/:factId`} element={<RemoveFunFact/>}/>
 				</Routes>
 
 				<Footer/>

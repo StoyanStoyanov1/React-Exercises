@@ -6,7 +6,8 @@ const Path = {
 	CreateFunFact:'/create-fun-fact',
 	DetailsFunFact: '/details-fun-fact',
 	EditFunFact: '/edit-fun-fact',
-	Logout: '/logout'
+	Logout: '/logout',
+	RemovePath: '/remove-path'
 };
 
 export default Path;

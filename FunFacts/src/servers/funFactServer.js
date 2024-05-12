@@ -17,3 +17,7 @@ export const getOne = async (factId) => {
 export const edit = async (factId, data) => {
 	return await request('PUT', `${baseUrl}/${factId}`, data);
 };
+
+export const remove = async (factId) => {
+	return await request('DELETE', `${baseUrl}/${factId}`);
+};

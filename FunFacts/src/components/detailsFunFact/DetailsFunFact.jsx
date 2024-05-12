@@ -54,7 +54,7 @@ export default function DetailsFunFact() {
 					{userId === fact._ownerId && (<div id="action-buttons">
 
 						<Link to={`${Path.EditFunFact}/${factId}`} id="edit-btn">Edit</Link>
-						<Link to="" id="delete-btn">Delete</Link>
+						<Link to={`${Path.RemovePath}/${factId}`} id="delete-btn">Delete</Link>
 
 
 					</div>)}
