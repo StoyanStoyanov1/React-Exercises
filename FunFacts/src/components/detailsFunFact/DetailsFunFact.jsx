@@ -1,35 +1,39 @@
 import {Link, useParams} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
-import {getOne} from "../../servers/funFactServer.js";
+import {edit, getOne} from "../../servers/funFactServer.js";
 import authContext from "../../context/AuthContext.jsx";
 
 export default function DetailsFunFact() {
-	const {factId} = useParams();
+
+	const {factId, likes} = useParams();
 
 	const {userId} = useContext(authContext)
 	const [fact, setFact] = useState({});
-	const [likeCount, setLikeCount] = useState(0);
-	const [isLiked, setIsLiked] = useState(false);
+	const [allLikes, setAllLikes] = useState([]);
 
-	const clickLikeButton = () => {
+	const [isLiked, setIsLiked] = useState(false)
 
-		if (!isLiked) {
-			setLikeCount(likeCount + 1);
-			setIsLiked(true);
-		} else {
-			setLikeCount(likeCount - 1);
-			setIsLiked(false);
+	const clickLikeButton = async () => {
+		const updatedLikes = isLiked ? allLikes.filter(like => like !== userId) : [...allLikes, userId];
+		setAllLikes(updatedLikes);
+		setIsLiked(!isLiked);
+		const updatedFact = {...fact, likes: updatedLikes};
+		try {
+			await edit(factId, updatedFact);
+		} catch (error) {
+			console.error('Failed to update likes:', error);
 		}
+	};
 
-	}
 
 	useEffect(() => {
 		getOne(factId).then(result => {
 			setFact(result);
-			setLikeCount(result.likes || 0)
+			setAllLikes(result.likes)
+			setIsLiked(result.likes.includes(userId));
 		});
-	}, [factId]);
 
+	}, [factId, isLiked]);
 	return (
 		<section id="details">
 			<div id="details-wrapper">
@@ -45,7 +49,7 @@ export default function DetailsFunFact() {
 						</p>
 					</div>
 
-					<h3>Likes:<span id="likes">{likeCount}</span></h3>
+					<h3>Likes:<span id="likes">{allLikes.length}</span></h3>
 					{userId === fact._ownerId && (<div id="action-buttons">
 
 						<Link to="" id="edit-btn">Edit</Link>
@@ -54,7 +58,7 @@ export default function DetailsFunFact() {
 
 					</div>)}
 
-					{userId !== fact._ownerId && (
+					{userId && userId !== fact._ownerId && (
 						<div id="action-buttons">
 							<button onClick={clickLikeButton} id="like-btn">{isLiked ? 'Dislike': 'Like'}</button>
 						</div>
