@@ -14,28 +14,31 @@ import Footer from "./components/footer/Footer.jsx";
 import Logout from "./components/logout/Logout.jsx";
 import EditFunFact from "./components/editFunFact/EditFunFact.jsx";
 import RemoveFunFact from "./components/removeFunFact/RemoveFunFact.jsx";
+import ErrorBoundary from "./components/ErrorBoundary.jsx";
 
 function App() {
 	return (
-		<AuthProvider>
-			<div id="wrapper">
-				<Header/>
+		<ErrorBoundary>
+			<AuthProvider>
+				<div id="wrapper">
+					<Header/>
 
-				<Routes>
-					<Route path={Path.Home} element={<Home/>}/>
-					<Route path={Path.FunFacts} element={<FunFacts/>}/>
-					<Route path={Path.Register} element={<Register/>}/>
-					<Route path={Path.Login} element={<Login/>}/>
-					<Route path={Path.CreateFunFact} element={<CreateFunFact/>}/>
-					<Route path={`${Path.DetailsFunFact}/:factId`} element={<DetailsFunFact/>}/>
-					<Route path={Path.Logout} element={<Logout/>}/>
-					<Route path={`${Path.EditFunFact}/:factId`} element={<EditFunFact />}/>
-					<Route path={`${Path.RemovePath}/:factId`} element={<RemoveFunFact/>}/>
-				</Routes>
+					<Routes>
+						<Route path={Path.Home} element={<Home/>}/>
+						<Route path={Path.FunFacts} element={<FunFacts/>}/>
+						<Route path={Path.Register} element={<Register/>}/>
+						<Route path={Path.Login} element={<Login/>}/>
+						<Route path={Path.CreateFunFact} element={<CreateFunFact/>}/>
+						<Route path={`${Path.DetailsFunFact}/:factId`} element={<DetailsFunFact/>}/>
+						<Route path={Path.Logout} element={<Logout/>}/>
+						<Route path={`${Path.EditFunFact}/:factId`} element={<EditFunFact/>}/>
+						<Route path={`${Path.RemovePath}/:factId`} element={<RemoveFunFact/>}/>
+					</Routes>
 
-				<Footer/>
-			</div>
-		</AuthProvider>
+					<Footer/>
+				</div>
+			</AuthProvider>
+		</ErrorBoundary>
 	);
 }
 
