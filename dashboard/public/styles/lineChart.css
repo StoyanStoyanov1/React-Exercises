@@ -1,0 +1,47 @@
+.orders-card {
+  background: white;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  padding: 16px;
+  font-family: 'Arial', sans-serif;
+  width: 350px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.header h3 {
+  font-size: 16px;
+  margin: 0;
+  color: #333;
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+}
+
+.stats .value {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.stats .arrow-up {
+  color: #28a745;
+  font-size: 14px;
+}
+
+.arrow-down {
+  color: #dc3545;
+  font-size: 14px;
+}
+
+.orders-card:hover {
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
