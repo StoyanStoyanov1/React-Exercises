@@ -1,5 +1,5 @@
 import isValidDate from './isValidDate';
-
+ 
 function customFilterLogic (data, order="asc") {
     const entries = Object.entries(data);
     const numberRegex = /^\d+(\.\d+)?$/;
@@ -11,16 +11,22 @@ function customFilterLogic (data, order="asc") {
             if (isValidDate(values[0])) {
                 values.map(date => new Date(date));
             }
-          values.sort((a, b) => order === 'asc' ? a.localeCompare(b) : b.localeCompare(a)) 
+            values.sort((a, b) => {
+              if (a instanceof Date && b instanceof Date) {
+                  return order === 'asc' ? a - b : b - a;  
+              } else {
+                  return order === 'asc' ? a.localeCompare(b) : b.localeCompare(a); 
+              }
+          });        
         }
-
+ 
         return [key, values];
     });
-
+ 
     const sortedObject = Object.fromEntries(sortedEntries);
-
+ 
     console.log(sortedObject);
-
+ 
   };
-
+ 
 export default customFilterLogic;
