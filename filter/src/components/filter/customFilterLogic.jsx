@@ -11,13 +11,13 @@ function customFilterLogic (data, order="asc") {
             if (isValidDate(values[0])) {
                 values.map(date => new Date(date));
             }
-            values.sort((a, b) => {
-              if (a instanceof Date && b instanceof Date) {
-                  return order === 'asc' ? a - b : b - a;  
-              } else {
-                  return order === 'asc' ? a.localeCompare(b) : b.localeCompare(a); 
-              }
-          });        
+          values.sort((a, b) => {
+            if (a instanceof Date && b instanceof Date) {
+                return order === 'asc' ? a - b : b - a;  
+            } else {
+                return order === 'asc' ? a.localeCompare(b) : b.localeCompare(a); 
+            }
+        });        
         }
  
         return [key, values];
