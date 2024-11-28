@@ -1,49 +1,33 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
-import customFilterLogic from './components/filter/customFilterLogic'
+import Sorting from './components/filter/Sorting';
 
-const tableData = {
-   "ID": [1, 2, 3, 4, 5],
-   "Name": ["John", "Sane", "Jack", "Bill", "Hames"],
-   "Age": [30, 28, 35, 32, 40],
-   "Department": ["Engineering", "HR", "Marketing", "Engineering", "Sales"],
-   "Salary": ["5000", "450", "60000", "5500", "7000"],
-   "JoiningDate": ["2020-01-10", "2019-06-15", "2021-03-01", "2020-09-30", "2018-11-20"],
-   "Active": [true, false, true, true, false]
- };
+const jsonArray = [
+  { name: "Alice", age: 25, date: "01.01.2023" },
+  { name: "Bob", age: 30, date: "12.10.2020" },
+  { name: "Charlie", age: 20, date: "23.05.2021" },
+  { name: "David", age: 35, date: "05.03.2024" },
+  { name: "Eve", age: 28, date: "19.07.2022" },
+  { name: "Frank", age: 22, date: "15.02.2025" },
+  { name: "Grace", age: 26, date: "10.06.2020" },
+  { name: "Hannah", age: 29, date: "11.04.2023" },
+  { name: "Isaac", age: 24, date: "20.08.2021" },
+  { name: "Jack", age: 31, date: "02.01.2022" },
+  { name: "Karen", age: 27, date: "14.09.2024" },
+  { name: "Liam", age: 32, date: "18.11.2020" },
+  { name: "Mia", age: 21, date: "25.12.2025" },
+  { name: "Noah", age: 23, date: "30.10.2023" },
+  { name: "Olivia", age: 33, date: "03.03.2021" },
+  { name: "Paul", age: 34, date: "16.06.2022" },
+  { name: "Quinn", age: 19, date: "09.05.2024" },
+];
 
 function App() {
-  const [count, setCount] = useState(0);
-  const [order, setOrder] = useState('asc');
 
-  const setDate = () => {
-      customFilterLogic(tableData, order);
-      setOrder(order === 'asc' ? 'desc' : 'asc')
-  }
+  
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={setDate}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Sorting values={jsonArray}/>
   )
 }
 
