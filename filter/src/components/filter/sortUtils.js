@@ -1,19 +1,18 @@
 const baseComparators = {
-    
-    number: (a, b, order = 'asc') => 
+    number: (a, b, order = 'asc') =>
         order === 'asc' ? a - b : b - a,
 
-    string: (a, b, order = 'asc') => 
+    string: (a, b, order = 'asc') =>
         order === 'asc'
             ? a.localeCompare(b)
             : b.localeCompare(a),
 
-    date: (a, b, order = 'asc') => 
-        order === 'asc' ? a - b : b - a
+    date: (a, b, order = 'asc') =>
+        order === 'asc' ? a - b : b - a,
 };
 
 const typeValidators = {
-    isNumber: (value) => 
+    isNumber: (value) =>
         typeof value === 'number' || !isNaN(Number(value)),
 
     isDate: (value) => {
@@ -36,7 +35,7 @@ const typeValidators = {
             parsedDate.getDate() === day
         );
     },
-}
+};
 
 function detectDataType(value) {
     if (typeValidators.isNumber(value)) return 'number';
@@ -50,7 +49,7 @@ function extractValues(jsonArray, key) {
 
 function sortJsonArray(jsonArray, key, order = 'asc') {
     if (!Array.isArray(jsonArray) || jsonArray.length === 0) {
-        throw new Error('Array is empty!')
+        throw new Error('Array is empty!');
     }
 
     const values = extractValues(jsonArray, key);
@@ -60,10 +59,10 @@ function sortJsonArray(jsonArray, key, order = 'asc') {
     const comparator = baseComparators[dataType];
 
     if (!comparator) {
-        throw new Error(`Unsupported data type for key "${key}": ${dataType}`)
+        throw new Error(`Unsupported data type for key "${key}": ${dataType}`);
     }
 
-    const transformedArray = dataType === 'date' 
+    const transformedArray = dataType === 'date'
         ? jsonArray.map(item => ({
             ...item,
             _sortValue: (() => {
@@ -76,11 +75,34 @@ function sortJsonArray(jsonArray, key, order = 'asc') {
             _sortValue: item[key],
         }));
 
-        const sortedArray = transformedArray.sort((a, b) => 
+    const sortedArray = transformedArray.sort((a, b) =>
         comparator(a._sortValue, b._sortValue, order)
     );
 
     return sortedArray.map(({ _sortValue, ...rest }) => rest);
+}
+
+function filterByNumberRange(jsonArray, key, minValue = null, maxValue = null) {
+    if (!Array.isArray(jsonArray) || jsonArray.length === 0) {
+        throw new Error('Array is empty!');
+    }
+
+    if (minValue !== null && maxValue !== null && minValue > maxValue) {
+        throw new Error('The minimum value cannot be greater than the maximum value.');
+    }
+
+    return jsonArray.filter(item => {
+        const value = Number(item[key]);
+
+        if (isNaN(value)) {
+            return false;
+        }
+
+        return (
+            (minValue === null || value >= minValue) &&
+            (maxValue === null || value <= maxValue)
+        );
+    });
 }
 
 const sortUtils = {
@@ -88,6 +110,8 @@ const sortUtils = {
     typeValidators,
     detectDataType,
     extractValues,
-    sortJsonArray
-}
+    sortJsonArray,
+    filterByNumberRange,
+};
+
 export default sortUtils;
