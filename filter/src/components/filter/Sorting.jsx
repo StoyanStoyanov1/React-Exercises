@@ -17,7 +17,7 @@ function Sorting ({values}) {
 
     return (
         <div>
-            <label htmlFor="keySelect">Select key</label>
+            <label htmlFor="keySelect">Select key: </label>
             <select 
             id="KeySelect"
             value={selectedKey}
@@ -30,6 +30,7 @@ function Sorting ({values}) {
                     </option>
                 ))}
             </select>
+            <label >decrease:</label>
             <input
                 type="checkbox"
                 checked={order}
