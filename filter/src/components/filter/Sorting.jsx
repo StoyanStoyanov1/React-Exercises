@@ -7,6 +7,16 @@ function Sorting({ values }) {
   const [order, setOrder] = useState(false);
   const [minNumber, setMinNumber] = useState(null);
   const [maxNumber, setMaxNumber] = useState(null);
+  const [search, setSearch] = useState("");
+  const [searchKeys, setSearchKeys] = useState([]);
+  const [searchSelectedKey, setSearchSelectedKey] = useState("");
+
+  useEffect(() => {
+    const stringKeys = Object.keys(values[0]).filter(
+      (key) => typeof values[0][key] === "string"
+    );
+    setSearchKeys(stringKeys);
+  }, [values]);
 
   useEffect(() => {
     if (selectedKey !== "" && sortUtils.typeValidators.isNumber(values[0][selectedKey])) {
@@ -19,32 +29,47 @@ function Sorting({ values }) {
     }
   }, [selectedKey, values]);
 
-  const filterNumber = () => {
-    const minNumberValid = minNumber !== null && !isNaN(minNumber) ? Number(minNumber) : null;
-    const maxNumberValid = maxNumber !== null && !isNaN(maxNumber) ? Number(maxNumber) : null;
-
-    if (minNumberValid !== null && maxNumberValid !== null && minNumberValid > maxNumberValid) {
-        return alert("Minimum number cannot be greater than the maximum number.");
-    }
-
-    return sortUtils.filterByNumberRange(values, selectedKey, minNumberValid, maxNumberValid);
-  };
-
   const handleSort = () => {
     if (selectedKey === "") return alert("Select your key");
 
-    const filteredData = typeof values[0][selectedKey] === 'number' 
-                          ? filterNumber() 
-                          : values
+    const filteredData =
+      typeof values[0][selectedKey] === "number"
+        ? sortUtils.filterByNumberRange(values, selectedKey, minNumber, maxNumber)
+        : values;
 
-    const sortedData = sortUtils.sortJsonArray(filteredData, selectedKey, !order ? "asc" : "desc");
+    let sortedData = sortUtils.sortJsonArray(filteredData, selectedKey, !order ? "asc" : "desc");
+
+    if (search.trim() !== "" && searchSelectedKey !== "") {
+      sortedData = sortUtils.filterBySearch(sortedData, searchSelectedKey, search.trim())
+    }
 
     setSortedData(sortedData);
-};
-
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      <label>Search:</label>
+      <input
+        style={{ maxWidth: "200px" }}
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
+      <label>Select search key:</label>
+      <select
+        id="search"
+        value={searchSelectedKey}
+        style={{ maxWidth: "150px" }}
+        onChange={(e) => setSearchSelectedKey(e.target.value)}
+      >
+        <option value="">Select search key</option>
+        {searchKeys.map((key) => (
+          <option key={key} value={key}>
+            {key}
+          </option>
+        ))}
+      </select>
+
       <label htmlFor="keySelect">Select key:</label>
       <select
         id="KeySelect"

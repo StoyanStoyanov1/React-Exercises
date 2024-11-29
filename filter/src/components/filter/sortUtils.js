@@ -105,6 +105,15 @@ function filterByNumberRange(jsonArray, key, minValue = null, maxValue = null) {
     });
 }
 
+function filterBySearch (values, key, search) {
+
+    return values.filter((item) =>
+        String(item[key])
+          .toLowerCase()
+          .includes(search.toLowerCase())
+      );
+}
+
 const sortUtils = {
     baseComparators,
     typeValidators,
@@ -112,6 +121,7 @@ const sortUtils = {
     extractValues,
     sortJsonArray,
     filterByNumberRange,
+    filterBySearch,
 };
 
 export default sortUtils;
