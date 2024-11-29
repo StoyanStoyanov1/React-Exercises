@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import {Route, Routes} from 'react-router-dom'
+import paths from './paths/paths';
+
 import Sorting from './components/filter/Sorting';
 
 const jsonArray = [
@@ -27,7 +27,11 @@ function App() {
 
   
   return (
-    <Sorting values={jsonArray}/>
+    <>
+    <Routes>
+      <Route path={paths.home} element={<Sorting values={jsonArray}/>} />
+     </Routes>
+    </>
   )
 }
 
