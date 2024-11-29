@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import sortUtils from "./sortUtils";
+import sortUtils from "../../utils/sortUtils";
 
 function Sorting({ values }) {
   const [selectedKey, setSelectedKey] = useState("");
