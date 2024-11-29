@@ -19,9 +19,7 @@ function Sorting({ values }) {
     }
   }, [selectedKey, values]);
 
-  const handleSort = () => {
-    if (selectedKey === "") return alert("Select your key");
-
+  const filterNumber = () => {
     const minNumberValid = minNumber !== null && !isNaN(minNumber) ? Number(minNumber) : null;
     const maxNumberValid = maxNumber !== null && !isNaN(maxNumber) ? Number(maxNumber) : null;
 
@@ -29,7 +27,15 @@ function Sorting({ values }) {
         return alert("Minimum number cannot be greater than the maximum number.");
     }
 
-    const filteredData = sortUtils.filterByNumberRange(values, selectedKey, minNumberValid, maxNumberValid);
+    return sortUtils.filterByNumberRange(values, selectedKey, minNumberValid, maxNumberValid);
+  };
+
+  const handleSort = () => {
+    if (selectedKey === "") return alert("Select your key");
+
+    const filteredData = typeof values[0][selectedKey] === 'number' 
+                          ? filterNumber() 
+                          : values
 
     const sortedData = sortUtils.sortJsonArray(filteredData, selectedKey, !order ? "asc" : "desc");
 
