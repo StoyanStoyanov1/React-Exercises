@@ -2,6 +2,8 @@ import {Route, Routes} from 'react-router-dom'
 import paths from './paths/paths';
 
 import Sorting from './components/filter/Sorting';
+import Info from './pages/Info';
+
 
 const jsonArray = [
   { name: "Alice", age: 25, date: "01.01.2023" },
@@ -30,7 +32,8 @@ function App() {
     <>
     <Routes>
       <Route path={paths.home} element={<Sorting values={jsonArray}/>} />
-     </Routes>
+      <Route path={paths.info} element={<Info />} />
+    </Routes>
     </>
   )
 }
