@@ -1,19 +1,31 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
+import FilterOptions from "./FilterOptions";
 
-const FilterButton = ({ infoTable }) => {
+const FilterButton = ({ infoTable, handleFilter }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [hoveredItem, setHoveredItem] = useState(null);
+  const [openSubmenu, setOpenSubmenu] = useState(null); 
   const menuRef = useRef(null);
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
   };
 
+  const toggleSubmenu = (field) => {
+    setOpenSubmenu((prev) => (prev === field ? null : field)); 
+  };
+
+  const handleSetFilter = (filter) => {
+    handleFilter(filter);
+
+    setIsMenuOpen(false);
+    setOpenSubmenu(null); 
+  }
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsMenuOpen(false);
-        setHoveredItem(null);
+        setOpenSubmenu(null); 
       }
     };
 
@@ -80,22 +92,23 @@ const FilterButton = ({ infoTable }) => {
               col.field !== "id" && (
                 <div
                   key={key}
-                  onMouseEnter={() => setHoveredItem(col.field)}
-                  onMouseLeave={() => setHoveredItem(null)}
                   style={{
                     padding: "8px 16px",
                     cursor: "pointer",
                     position: "relative",
                     display: "flex",
                     alignItems: "center",
-                    borderRight: key !== infoTable.length - 1 ? "1px solid #ccc" : "none", 
-                    backgroundColor: hoveredItem === col.field ? "#f0f0f0" : "#fff", 
-                    transition: "background-color 0.2s ease", 
+                    borderRight:
+                      key !== infoTable.length - 1 ? "1px solid #ccc" : "none",
+                    backgroundColor:
+                      openSubmenu === col.field ? "#f0f0f0" : "#fff", 
+                    transition: "background-color 0.2s ease",
                   }}
+                  onClick={() => toggleSubmenu(col.field)} 
                 >
                   {col.label}
 
-                  {hoveredItem === col.field && (
+                  {openSubmenu === col.field && (
                     <div
                       style={{
                         position: "absolute",
@@ -109,43 +122,9 @@ const FilterButton = ({ infoTable }) => {
                         boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                         zIndex: 1000,
                       }}
-                      onMouseEnter={() => setHoveredItem(col.field)}
-                      onMouseLeave={() => setHoveredItem(null)}
+                      onClick={(e) => e.stopPropagation()} 
                     >
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: "8px",
-                        }}
-                      >
-                        <input
-                          type="text"
-                          placeholder="Input 1"
-                          style={{
-                            padding: "4px",
-                            border: "1px solid #ccc",
-                            borderRadius: "4px",
-                          }}
-                        />
-                        <input
-                          type="text"
-                          placeholder="Input 2"
-                          style={{
-                            padding: "4px",
-                            border: "1px solid #ccc",
-                            borderRadius: "4px",
-                          }}
-                        />
-                        <input
-                          type="text"
-                          placeholder="Input 3"
-                          style={{
-                            padding: "4px",
-                            border: "1px solid #ccc",
-                            borderRadius: "4px",
-                          }}
-                        />
-                      </div>
+                      <FilterOptions col={col} handleSetFilter={handleSetFilter}/>
                     </div>
                   )}
                 </div>
