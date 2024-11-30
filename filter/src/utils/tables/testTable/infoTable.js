@@ -1,9 +1,12 @@
-const infoTable = {
-    id: {name: "#", style: { padding: "10px", textAlign: "left", borderBottom: "2px solid #ddd" }},
-    title: {name: "Title", style: { padding: "10px", textAlign: "left", borderBottom: "2px solid #ddd" }},
-    description: {name: "Description", style: { padding: "10px", textAlign: "left", borderBottom: "2px solid #ddd" }},
-    value: {name: "Value", style: { padding: "10px", textAlign: "left", borderBottom: "2px solid #ddd" }},
-};
+const infoTable = [
+    {field: "id", label: "ID", align: "center", style: {width: "50px"}},
+    {field: "title", label: "Title", align: "center", style: {width: "150px"}},
+    {field: "description", label: "Description", align: "center", style: {width: "200px"}},
+    {field: "value", label: "Value", align: "center", style: {width: "200px"}},
+    {field: "date", label: "Date", align: "center", style: {width: "200px"}},
+]
+  
+;
 
 export default infoTable;
 

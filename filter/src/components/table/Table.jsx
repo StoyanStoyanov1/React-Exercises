@@ -1,15 +1,10 @@
 import React from "react";
-import tables from "../../utils/tables/tables";
+import infoTable from "../../utils/tables/testTable/infoTable";
 
-const Table = ({values, typeTable}) => {
-    const table = tables[typeTable];
-    const cols = Object.keys(table);
-
-
-
+const Table = ({values, tableHeaderStyles}) => {
+    
   return (
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-      <h2>{typeTable} Table</h2>
       <table style={{
         width: "100%",
         borderCollapse: "collapse",
@@ -17,10 +12,10 @@ const Table = ({values, typeTable}) => {
         borderRadius: "8px",
         overflow: "hidden"
       }}>
-        <thead style={{ backgroundColor: "#f4f4f4" }}>
+        <thead style={tableHeaderStyles}>
           <tr>
-            { cols.map((col, key) => (
-                <th key={key} style={table[col].style}>{table[col].name}</th>
+            { infoTable.map((col, key) => (
+                <th key={key} style={{...col.style, padding: '15px'}}>{col.label}</th>
                 ))
             }
           </tr>
@@ -28,8 +23,8 @@ const Table = ({values, typeTable}) => {
         <tbody>
           {values.map((item) => (
             <tr key={item.id} style={{ borderBottom: "1px solid #ddd" }}>
-                {cols.map((col, key) => (
-                    <td key={key} style={{ padding: "10px" }}>{item[col]}</td>
+                {infoTable.map((col, key) => (
+                    <td key={key} style={{ padding: "10px" }}>{item[col.field]}</td>
                 ))}
               
               
