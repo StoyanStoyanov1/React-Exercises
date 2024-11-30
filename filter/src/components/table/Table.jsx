@@ -1,7 +1,6 @@
 import React from "react";
-import infoTable from "../../utils/tables/testTable/infoTable";
 
-const Table = ({values, tableHeaderStyles}) => {
+const Table = ({values, tableHeaderStyles, infoTable}) => {
     
   return (
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>

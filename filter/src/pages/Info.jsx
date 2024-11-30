@@ -1,7 +1,8 @@
 import Table from "../components/table/Table";
 import infoData from "../utils/tables/testTable/infoData";
-import SearchInput from "../components/templates/SearchInput";
-import FilterButton from "../components/templates/FilterButtons";
+import SearchInput from "../components/common/SearchInput";
+import FilterButton from "../components/common/FilterButton";
+import infoTable from "../utils/tables/testTable/infoTable";
 
 const tableHeaderStyles = {
     backgroundColor: "#f4f4f4",
@@ -17,10 +18,10 @@ function Info () {
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         
                 <SearchInput />
-                <FilterButton />
+                <FilterButton infoTable={infoTable}/>
         
             </div>
-                <Table values={infoData} tableHeaderStyles={tableHeaderStyles} />
+                <Table values={infoData} tableHeaderStyles={tableHeaderStyles} infoTable={infoTable}/>
         </div>
     )
 }
