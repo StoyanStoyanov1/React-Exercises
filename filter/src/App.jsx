@@ -1,7 +1,7 @@
 import {Route, Routes} from 'react-router-dom'
 import paths from './paths/paths';
 
-import Sorting from './components/filter/Sorting';
+import Sorting from './components/sorting/Sorting';
 import Info from './pages/Info';
 
 
