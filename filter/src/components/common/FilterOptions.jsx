@@ -55,9 +55,13 @@ function FilterOptions({ infoTable, handleSetFilter }) {
   };
 
   const onSubmit = () => {
+    if (inputValue.trim().length === 0) {
+      return alert("Please select the value you want to filter by.")
+    }
+
     const objFilter = {
       field: selectedColumn.field,
-      value: inputValue,
+      value: inputValue.trim(),
       operator: operators[selectedColumn.type][selectedOperator],
     };
 

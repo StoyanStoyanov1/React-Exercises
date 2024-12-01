@@ -10,6 +10,8 @@ const FilterButton = ({ infoTable, handleFilter }) => {
   };
 
   const handleSetFilter = (filter) => {
+    
+
     handleFilter(filter);
     setIsMenuOpen(false); 
   }

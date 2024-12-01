@@ -1,10 +1,13 @@
 import { useNavigate } from "react-router-dom";
 
-import Table from "../components/table/Table";
+//utils
+import infoTable from "../utils/tables/testTable/infoTable";
 import infoData from "../utils/tables/testTable/infoData";
+
+//components
+import Table from "../components/table/Table";
 import SearchInput from "../components/common/SearchInput";
 import FilterButton from "../components/common/FilterButton";
-import infoTable from "../utils/tables/testTable/infoTable";
 
 function Info() {
   const navigate = useNavigate();
