@@ -17,7 +17,7 @@ const FilterButton = ({ infoTable, handleFilter }) => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
-        toggleMenu();
+        setIsMenuOpen(false);
       }
     };
 
