@@ -6,37 +6,31 @@ import SearchInput from "../components/common/SearchInput";
 import FilterButton from "../components/common/FilterButton";
 import infoTable from "../utils/tables/testTable/infoTable";
 
-const tableHeaderStyles = {
-    backgroundColor: "#f4f4f4",
-    textAlign: "left",
-    fontWeight: "bold",
-    padding: "10px",
+function Info() {
+  const navigate = useNavigate();
+
+  const filterTable = infoTable.filter((info) => info.field !== "id");
+
+  const handleFilter = (filter) => {
+    const queryParams = new URLSearchParams(filter).toString();
+    navigate(`/info?${queryParams}`);
   };
 
+  return (
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <div className="flex items-center gap-4 mb-6">
+        <SearchInput />
+        <FilterButton infoTable={filterTable} handleFilter={handleFilter} />
+      </div>
 
-
-function Info () {
-    const navigate = useNavigate();
-
-    const filterTable = infoTable.filter((info) => info.field !== 'id')
-    
-    const handleFilter = (filter) => {
-        const queryParams = new URLSearchParams(filter).toString();
-
-         navigate(`/info?${queryParams}`);
-    }
-
-    return (
-        <div >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        
-                <SearchInput />
-                <FilterButton infoTable={filterTable} handleFilter={handleFilter}/>
-        
-            </div>
-                <Table values={infoData} tableHeaderStyles={tableHeaderStyles} infoTable={infoTable}/>
-        </div>
-    )
+      <div className="bg-white shadow-md rounded-lg overflow-hidden">
+        <Table
+          values={infoData}
+          infoTable={infoTable}
+        />
+      </div>
+    </div>
+  );
 }
 
 export default Info;

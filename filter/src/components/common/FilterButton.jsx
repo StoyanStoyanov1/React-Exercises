@@ -55,7 +55,7 @@ const FilterButton = ({ infoTable, handleFilter }) => {
       {isMenuOpen && (
         <div
           className="absolute top-full left-0 mt-1 p-4 border border-gray-300 rounded-lg bg-white shadow-lg z-10"
-          onClick={(e) => e.stopPropagation()} // Предотврати клик затваряне
+          onClick={(e) => e.stopPropagation()} 
         >
           <FilterOptions infoTable={infoTable} handleSetFilter={handleSetFilter} />
         </div>
