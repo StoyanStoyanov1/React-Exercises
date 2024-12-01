@@ -17,6 +17,8 @@ const tableHeaderStyles = {
 
 function Info () {
     const navigate = useNavigate();
+
+    const filterTable = infoTable.filter((info) => info.field !== 'id')
     
     const handleFilter = (filter) => {
         const queryParams = new URLSearchParams(filter).toString();
@@ -29,7 +31,7 @@ function Info () {
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         
                 <SearchInput />
-                <FilterButton infoTable={infoTable} handleFilter={handleFilter}/>
+                <FilterButton infoTable={filterTable} handleFilter={handleFilter}/>
         
             </div>
                 <Table values={infoData} tableHeaderStyles={tableHeaderStyles} infoTable={infoTable}/>

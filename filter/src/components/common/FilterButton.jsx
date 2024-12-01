@@ -3,29 +3,21 @@ import FilterOptions from "./FilterOptions";
 
 const FilterButton = ({ infoTable, handleFilter }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [openSubmenu, setOpenSubmenu] = useState(null); 
   const menuRef = useRef(null);
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
   };
 
-  const toggleSubmenu = (field) => {
-    setOpenSubmenu((prev) => (prev === field ? null : field)); 
-  };
-
   const handleSetFilter = (filter) => {
     handleFilter(filter);
-
-    setIsMenuOpen(false);
-    setOpenSubmenu(null); 
-  }
+    toggleMenu();
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setIsMenuOpen(false);
-        setOpenSubmenu(null); 
+        toggleMenu();
       }
     };
 
@@ -73,64 +65,26 @@ const FilterButton = ({ infoTable, handleFilter }) => {
       </button>
 
       {isMenuOpen && (
+        
         <div
           style={{
-            display: "flex",
             position: "absolute",
             top: "100%",
             left: "0",
-            marginTop: "0",
+            marginTop: "-2px",
+            padding: "8px",
             border: "1px solid #ccc",
             borderRadius: "4px",
             backgroundColor: "#fff",
             boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
             zIndex: 1000,
           }}
+          onClick={(e) => e.stopPropagation()} 
         >
-          {infoTable.map(
-            (col, key) =>
-              col.field !== "id" && (
-                <div
-                  key={key}
-                  style={{
-                    padding: "8px 16px",
-                    cursor: "pointer",
-                    position: "relative",
-                    display: "flex",
-                    alignItems: "center",
-                    borderRight:
-                      key !== infoTable.length - 1 ? "1px solid #ccc" : "none",
-                    backgroundColor:
-                      openSubmenu === col.field ? "#f0f0f0" : "#fff", 
-                    transition: "background-color 0.2s ease",
-                  }}
-                  onClick={() => toggleSubmenu(col.field)} 
-                >
-                  {col.label}
-
-                  {openSubmenu === col.field && (
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "100%",
-                        left: "0",
-                        marginTop: "-2px",
-                        padding: "8px",
-                        border: "1px solid #ccc",
-                        borderRadius: "4px",
-                        backgroundColor: "#fff",
-                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                        zIndex: 1000,
-                      }}
-                      onClick={(e) => e.stopPropagation()} 
-                    >
-                      <FilterOptions col={col} handleSetFilter={handleSetFilter}/>
-                    </div>
-                  )}
-                </div>
-              )
-          )}
+          <FilterOptions infoTable={infoTable} handleSetFilter={handleSetFilter}/>
         </div>
+                 
+                
       )}
     </div>
   );
