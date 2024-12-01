@@ -11,8 +11,8 @@ const FilterButton = ({ infoTable, handleFilter }) => {
 
   const handleSetFilter = (filter) => {
     handleFilter(filter);
-    toggleMenu();
-  };
+    setIsMenuOpen(false); 
+  }
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -28,23 +28,10 @@ const FilterButton = ({ infoTable, handleFilter }) => {
   }, []);
 
   return (
-    <div style={{ position: "relative" }} ref={menuRef}>
+    <div className="relative" ref={menuRef}>
       <button
         onClick={toggleMenu}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "8px",
-          padding: "8px 16px",
-          border: "1px solid #ccc",
-          borderRadius: "8px",
-          backgroundColor: "#fff",
-          color: "#4A4A4A",
-          fontSize: "14px",
-          cursor: "pointer",
-          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-        }}
+        className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm shadow-sm hover:shadow-md focus:outline-none focus:ring focus:ring-gray-200"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -56,6 +43,7 @@ const FilterButton = ({ infoTable, handleFilter }) => {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+          className="w-4 h-4"
         >
           <line x1="3" y1="6" x2="21" y2="6"></line>
           <line x1="6" y1="12" x2="18" y2="12"></line>
@@ -65,26 +53,12 @@ const FilterButton = ({ infoTable, handleFilter }) => {
       </button>
 
       {isMenuOpen && (
-        
         <div
-          style={{
-            position: "absolute",
-            top: "100%",
-            left: "0",
-            marginTop: "-2px",
-            padding: "8px",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            backgroundColor: "#fff",
-            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-            zIndex: 1000,
-          }}
-          onClick={(e) => e.stopPropagation()} 
+          className="absolute top-full left-0 mt-1 p-4 border border-gray-300 rounded-lg bg-white shadow-lg z-10"
+          onClick={(e) => e.stopPropagation()} // Предотврати клик затваряне
         >
-          <FilterOptions infoTable={infoTable} handleSetFilter={handleSetFilter}/>
+          <FilterOptions infoTable={infoTable} handleSetFilter={handleSetFilter} />
         </div>
-                 
-                
       )}
     </div>
   );

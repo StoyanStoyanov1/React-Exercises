@@ -1,39 +1,39 @@
 import React, { useState } from "react";
 
 const operators = {
-    number: {
-        "==": "eq",
-        ">": "gt",
-        ">=": "gte",
-        "<=": "lte",
-        "<": "lt",
-        "!=": "neq",
-        },
-    date: {
-        "Is equal to": "eq", 
-        "Is not equal to": "neq", 
-        "Before": "lt", 
-        "On or before": "lte", 
-        "After": "gt",
-        "On or after": "gte",
-        "Between": "between", 
-        "Not between": "not_between", 
-    },
-    string: {
-        "Is equal to": "eq",
-        "Is not equal to": "neq",
-        "Contains": "contains",
-        "Does not contain": "ncontains",
-        "Starts with": "startswith",
-        "Ends with": "endswith",
-    }
+  number: {
+    "==": "eq",
+    ">": "gt",
+    ">=": "gte",
+    "<=": "lte",
+    "<": "lt",
+    "!=": "neq",
+  },
+  date: {
+    "Is equal to": "eq",
+    "Is not equal to": "neq",
+    "Before": "lt",
+    "On or before": "lte",
+    "After": "gt",
+    "On or after": "gte",
+    "Between": "between",
+    "Not between": "not_between",
+  },
+  string: {
+    "Is equal to": "eq",
+    "Is not equal to": "neq",
+    "Contains": "contains",
+    "Does not contain": "ncontains",
+    "Starts with": "startswith",
+    "Ends with": "endswith",
+  },
 };
 
 function FilterOptions({ infoTable, handleSetFilter }) {
   const [selectedOperator, setSelectedOperator] = useState(
     Object.keys(operators[infoTable[0].type])[0]
   );
-  const [inputValue, setInputValue] = useState(""); 
+  const [inputValue, setInputValue] = useState("");
   const [selectedColumn, setSelectedColumn] = useState(infoTable[0]);
 
   const handleOperatorChange = (e) => {
@@ -55,34 +55,23 @@ function FilterOptions({ infoTable, handleSetFilter }) {
   };
 
   const onSubmit = () => {
-    const objFilter = { 
-      field: selectedColumn.field, 
-      value: inputValue, 
-      operator: operators[selectedColumn.type][selectedOperator] 
+    const objFilter = {
+      field: selectedColumn.field,
+      value: inputValue,
+      operator: operators[selectedColumn.type][selectedOperator],
     };
 
     handleSetFilter(objFilter);
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        gap: "16px",
-        alignItems: "flex-start",
-      }}
-    >
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-        <label style={{ marginBottom: "4px", fontWeight: "bold" }}>Columns</label>
+    <div className="flex gap-6 items-start">
+      <div className="flex flex-col items-start">
+        <label className="mb-1 font-bold text-gray-700">Columns</label>
         <select
           value={selectedColumn.label}
           onChange={handleColumnChange}
-          style={{
-            padding: "4px",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            backgroundColor: "#fff",
-          }}
+          className="px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring focus:ring-gray-200"
         >
           {infoTable.map((col, key) => (
             <option key={key} value={col.label}>
@@ -92,17 +81,12 @@ function FilterOptions({ infoTable, handleSetFilter }) {
         </select>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-        <label style={{ marginBottom: "4px", fontWeight: "bold" }}>Operators</label>
+      <div className="flex flex-col items-start">
+        <label className="mb-1 font-bold text-gray-700">Operators</label>
         <select
           value={selectedOperator}
           onChange={handleOperatorChange}
-          style={{
-            padding: "4px",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            backgroundColor: "#fff",
-          }}
+          className="px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring focus:ring-gray-200"
         >
           {Object.keys(operators[selectedColumn.type]).map((op) => (
             <option key={op} value={op}>
@@ -112,39 +96,20 @@ function FilterOptions({ infoTable, handleSetFilter }) {
         </select>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-        <label style={{ marginBottom: "4px", fontWeight: "bold" }}>Value</label>
+      <div className="flex flex-col items-start">
+        <label className="mb-1 font-bold text-gray-700">Value</label>
         <input
           type={selectedColumn.type}
           placeholder={selectedColumn.label}
-          style={{
-            padding: "4px",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            width: "150px",
-          }}
           value={inputValue}
           onChange={handleInputChange}
+          className="px-3 py-2 border border-gray-300 rounded-lg w-40 focus:outline-none focus:ring focus:ring-gray-200"
         />
       </div>
 
       <button
-        style={{
-          padding: "8px 16px",
-          border: "none",
-          borderRadius: "4px",
-          backgroundColor: "#007bff",
-          color: "#fff",
-          fontSize: "14px",
-          fontWeight: "bold",
-          cursor: "pointer",
-          transition: "background-color 0.3s ease",
-          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-          marginTop: "18px", 
-        }}
-        onMouseEnter={(e) => (e.target.style.backgroundColor = "#0056b3")}
-        onMouseLeave={(e) => (e.target.style.backgroundColor = "#007bff")}
         onClick={onSubmit}
+        className="mt-5 px-4 py-2 bg-blue-500 text-white font-bold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
       >
         Configure
       </button>
