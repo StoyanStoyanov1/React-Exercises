@@ -1,4 +1,15 @@
 import React, { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  TextField,
+  Button,
+  Box,
+} from "@mui/material";
 
 const operators = {
   number: {
@@ -56,7 +67,8 @@ function FilterOptions({ infoTable, handleSetFilter }) {
 
   const onSubmit = () => {
     if (inputValue.trim().length === 0) {
-      return alert("Please select the value you want to filter by.")
+      toast.error("Please select the value you want to filter by.");
+      return;
     }
 
     const objFilter = {
@@ -66,58 +78,84 @@ function FilterOptions({ infoTable, handleSetFilter }) {
     };
 
     handleSetFilter(objFilter);
+
   };
 
   return (
-    <div className="flex gap-6 items-start">
-      <div className="flex flex-col items-start">
-        <label className="mb-1 font-bold text-gray-700">Columns</label>
-        <select
+    <Box
+      display="flex"
+      alignItems="center"
+      gap={2}
+      p={2}
+      bgcolor="white"
+      boxShadow={2}
+      borderRadius={2}
+      maxWidth="800px"  
+      mx="auto"
+    >
+      <FormControl size="small" sx={{ minWidth: "150px" }}>
+        <InputLabel>Columns</InputLabel>
+        <Select
           value={selectedColumn.label}
           onChange={handleColumnChange}
-          className="px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring focus:ring-gray-200"
+          label="Columns"
         >
           {infoTable.map((col, key) => (
-            <option key={key} value={col.label}>
+            <MenuItem key={key} value={col.label}>
               {col.label}
-            </option>
+            </MenuItem>
           ))}
-        </select>
-      </div>
+        </Select>
+      </FormControl>
 
-      <div className="flex flex-col items-start">
-        <label className="mb-1 font-bold text-gray-700">Operators</label>
-        <select
+      <FormControl size="small" sx={{ minWidth: "150px" }}>
+        <InputLabel>Operators</InputLabel>
+        <Select
           value={selectedOperator}
           onChange={handleOperatorChange}
-          className="px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring focus:ring-gray-200"
+          label="Operators"
         >
           {Object.keys(operators[selectedColumn.type]).map((op) => (
-            <option key={op} value={op}>
+            <MenuItem key={op} value={op}>
               {op}
-            </option>
+            </MenuItem>
           ))}
-        </select>
-      </div>
+        </Select>
+      </FormControl>
 
-      <div className="flex flex-col items-start">
-        <label className="mb-1 font-bold text-gray-700">Value</label>
-        <input
-          type={selectedColumn.type}
-          placeholder={selectedColumn.label}
-          value={inputValue}
-          onChange={handleInputChange}
-          className="px-3 py-2 border border-gray-300 rounded-lg w-40 focus:outline-none focus:ring focus:ring-gray-200"
-        />
-      </div>
+      <TextField
+        size="small"
+        label="Value"
+        placeholder={`Enter ${selectedColumn.label}`}
+        value={inputValue}
+        onChange={handleInputChange}
+        sx={{ flex: 1 }}
+      />
 
-      <button
+      <Button
         onClick={onSubmit}
-        className="mt-5 px-4 py-2 bg-blue-500 text-white font-bold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+        variant="contained"
+        color="primary"
+        sx={{
+          fontSize: "0.875rem",
+          height: "40px",
+        }}
       >
         Configure
-      </button>
-    </div>
+      </Button>
+
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+    </Box>
   );
 }
 

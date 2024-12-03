@@ -1,69 +1,73 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
+import { Box, Button, Menu, MenuItem, IconButton } from "@mui/material";
+import FilterListIcon from "@mui/icons-material/FilterList";
 import FilterOptions from "./FilterOptions";
 
 const FilterButton = ({ infoTable, handleFilter }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const menuRef = useRef(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const isMenuOpen = Boolean(anchorEl);
 
-  const toggleMenu = () => {
-    setIsMenuOpen((prev) => !prev);
+  const toggleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const closeMenu = () => {
+    setAnchorEl(null);
   };
 
   const handleSetFilter = (filter) => {
-    
-
     handleFilter(filter);
-    setIsMenuOpen(false); 
-  }
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setIsMenuOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+    closeMenu(); 
+  };
 
   return (
-    <div className="relative" ref={menuRef}>
-      <button
+    <Box className="relative">
+      <Button
         onClick={toggleMenu}
-        className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm shadow-sm hover:shadow-md focus:outline-none focus:ring focus:ring-gray-200"
+        variant="outlined"
+        startIcon={<FilterListIcon />}
+        sx={{
+          textTransform: "none",
+          borderColor: "#d1d5db", 
+          color: "#374151", 
+          ":hover": {
+            backgroundColor: "#f9fafb", 
+          },
+        }}
+        className="shadow-sm hover:shadow-md" 
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="w-4 h-4"
-        >
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="6" y1="12" x2="18" y2="12"></line>
-          <line x1="9" y1="18" x2="15" y2="18"></line>
-        </svg>
         Filter
-      </button>
+      </Button>
 
-      {isMenuOpen && (
-        <div
-          className="absolute top-full left-0 mt-1 p-4 border border-gray-300 rounded-lg bg-white shadow-lg z-10"
-          onClick={(e) => e.stopPropagation()} 
-        >
-          <FilterOptions infoTable={infoTable} handleSetFilter={handleSetFilter} />
-        </div>
-      )}
-    </div>
+      <Menu
+        anchorEl={anchorEl}
+        open={isMenuOpen}
+        onClose={closeMenu}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        PaperProps={{
+          className: "border border-gray-300 rounded-lg shadow-lg", 
+          sx: {
+            mt: 1,
+          },
+        }}
+      >
+        <MenuItem disableRipple className="p-4">
+          <FilterOptions
+            infoTable={infoTable}
+            handleSetFilter={handleSetFilter}
+          />
+        </MenuItem>
+      </Menu>
+    </Box>
   );
 };
 
 export default FilterButton;
+  
