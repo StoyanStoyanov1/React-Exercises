@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
   FormControl,
@@ -68,7 +68,7 @@ function FilterOptions({ infoTable, handleSetFilter }) {
   const onSubmit = () => {
     if (inputValue.trim().length === 0) {
       toast.error("Please select the value you want to filter by.");
-      return;
+      return; 
     }
 
     const objFilter = {
@@ -144,17 +144,6 @@ function FilterOptions({ infoTable, handleSetFilter }) {
         Configure
       </Button>
 
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
     </Box>
   );
 }
