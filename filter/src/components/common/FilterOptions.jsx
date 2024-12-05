@@ -40,25 +40,30 @@ const operators = {
   },
 };
 
-function FilterOptions({ infoTable, handleSetFilter }) {
+function FilterOptions({ infoTable, handleSetFilter, defaultOperator, defaultColumn }) {
+
   const [selectedOperator, setSelectedOperator] = useState(
-    Object.keys(operators[infoTable[0].type])[0]
+  Object.keys(operators[defaultOperator])[0]
   );
   const [inputValue, setInputValue] = useState("");
-  const [selectedColumn, setSelectedColumn] = useState(infoTable[0]);
+  const [selectedColumn, setSelectedColumn] = useState(defaultColumn);
+
 
   const handleOperatorChange = (e) => {
+    setInputValue('');
+
     setSelectedOperator(e.target.value);
   };
 
   const handleColumnChange = (e) => {
+    
     const currentLabel = e.target.value;
 
     const foundColumn = infoTable.find((col) => col.label === currentLabel);
 
     setSelectedColumn(foundColumn);
 
-    setSelectedOperator(Object.keys(operators[foundColumn.type])[0]);
+    setSelectedOperator(defaultOperator);
   };
 
   const handleInputChange = (e) => {
@@ -125,7 +130,8 @@ function FilterOptions({ infoTable, handleSetFilter }) {
 
       <TextField
         size="small"
-        label="Value"
+        label={selectedColumn.label}
+        type={selectedColumn.type}
         placeholder={`Enter ${selectedColumn.label}`}
         value={inputValue}
         onChange={handleInputChange}

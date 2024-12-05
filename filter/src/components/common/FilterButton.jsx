@@ -62,6 +62,8 @@ const FilterButton = ({ infoTable, handleFilter }) => {
           <FilterOptions
             infoTable={infoTable}
             handleSetFilter={handleSetFilter}
+            defaultOperator={infoTable[0].type}
+            defaultColumn={infoTable[0]}
           />
         </MenuItem>
       </Menu>
