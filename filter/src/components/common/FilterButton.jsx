@@ -3,7 +3,7 @@ import { Box, Button, Menu, MenuItem, IconButton } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import FilterOptions from "./FilterOptions";
 
-const FilterButton = ({ infoTable, handleFilter }) => {
+const FilterButton = ({ infoTable, path}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
 
@@ -60,8 +60,8 @@ const FilterButton = ({ infoTable, handleFilter }) => {
       >
         <MenuItem disableRipple className="p-4">
           <FilterOptions
+            path={path}
             infoTable={infoTable}
-            handleSetFilter={handleSetFilter}
             defaultOperator={infoTable[0].type}
             defaultColumn={infoTable[0]}
           />

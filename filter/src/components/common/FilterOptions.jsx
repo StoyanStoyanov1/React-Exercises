@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -42,7 +43,9 @@ const operators = {
   },
 };
 
-function FilterOptions({ infoTable, handleSetFilter, defaultOperator, defaultColumn }) {
+function FilterOptions({ infoTable, path, defaultOperator, defaultColumn }) {
+  const navigate = useNavigate();
+
   const [selectedOperator, setSelectedOperator] = useState(
     Object.keys(operators[defaultOperator])[0]
   );
@@ -125,7 +128,8 @@ function FilterOptions({ infoTable, handleSetFilter, defaultOperator, defaultCol
       operator: operators[selectedColumn.type][selectedOperator],
     };
 
-    handleSetFilter(objFilter);
+    const queryParams = new URLSearchParams(objFilter).toString();
+    navigate(`/${path}?${queryParams}`);
 
   };
 
