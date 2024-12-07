@@ -19,21 +19,23 @@ const operators = {
     "<=": "lte",
     "<": "lt",
     "!=": "neq",
+    Between: "between",
+    "Not between": "not_between",
   },
   date: {
     "Is equal to": "eq",
     "Is not equal to": "neq",
-    "Before": "lt",
+    Before: "lt",
     "On or before": "lte",
-    "After": "gt",
+    After: "gt",
     "On or after": "gte",
-    "Between": "between",
+    Between: "between",
     "Not between": "not_between",
   },
   string: {
     "Is equal to": "eq",
     "Is not equal to": "neq",
-    "Contains": "contains",
+    Contains: "contains",
     "Does not contain": "ncontains",
     "Starts with": "startswith",
     "Ends with": "endswith",
@@ -41,44 +43,85 @@ const operators = {
 };
 
 function FilterOptions({ infoTable, handleSetFilter, defaultOperator, defaultColumn }) {
-
   const [selectedOperator, setSelectedOperator] = useState(
-  Object.keys(operators[defaultOperator])[0]
+    Object.keys(operators[defaultOperator])[0]
   );
   const [inputValue, setInputValue] = useState("");
+  const [rangeValues, setRangeValues] = useState({ from: "", to: "" });
   const [selectedColumn, setSelectedColumn] = useState(defaultColumn);
 
+  
+  const isDisabled = (name) => {
+    const constraints = {};
+    if (name === "to" && rangeValues.from) {
+      constraints.min = rangeValues.from; 
+    }
+    if (name === "from" && rangeValues.to) {
+      constraints.max = rangeValues.to; 
+    }
+    return constraints;
+  };
 
   const handleOperatorChange = (e) => {
-    setInputValue('');
-
     setSelectedOperator(e.target.value);
   };
 
   const handleColumnChange = (e) => {
-    
-    const currentLabel = e.target.value;
+    setInputValue("");
+    setRangeValues({ from: "", to: "" });
 
+    const currentLabel = e.target.value;
     const foundColumn = infoTable.find((col) => col.label === currentLabel);
 
     setSelectedColumn(foundColumn);
 
-    setSelectedOperator(defaultOperator);
+    const firstOperator = Object.keys(operators[foundColumn.type])[0];
+    setSelectedOperator(firstOperator);
   };
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
 
+  const handleRangeChange = (e) => {
+    const { name, value } = e.target;
+    setRangeValues((prev) => {
+      const updatedValues = { ...prev, [name]: value };
+
+      if (name === "from" && updatedValues.to && new Date(value) > new Date(updatedValues.to)) {
+        toast.error("The 'From' date cannot be later than the 'To' date.");
+        return prev;
+      }
+
+      if (name === "to" && updatedValues.from && new Date(value) < new Date(updatedValues.from)) {
+        toast.error("The 'To' date cannot be earlier than the 'From' date.");
+        return prev;
+      }
+
+      return updatedValues;
+    });
+  };
+
   const onSubmit = () => {
-    if (inputValue.trim().length === 0) {
-      toast.error("Please select the value you want to filter by.");
-      return; 
+    const operatorIsBetweenOrNotBetweeen = selectedOperator === "Between" || selectedOperator === "Not between";
+
+    if (operatorIsBetweenOrNotBetweeen) {
+      if (!rangeValues.from.trim() || !rangeValues.to.trim()) {
+        toast.error("Please provide both 'from' and 'to' values.");
+        return;
+      }
+
+    } else {
+      if (inputValue.trim().length === 0) {
+        toast.error("Please select the value you want to filter by.");
+        return;
+      }
+
     }
 
     const objFilter = {
       field: selectedColumn.field,
-      value: inputValue.trim(),
+      value: operatorIsBetweenOrNotBetweeen ? `${rangeValues.from}to${rangeValues.to}` :inputValue.trim(),
       operator: operators[selectedColumn.type][selectedOperator],
     };
 
@@ -95,7 +138,7 @@ function FilterOptions({ infoTable, handleSetFilter, defaultOperator, defaultCol
       bgcolor="white"
       boxShadow={2}
       borderRadius={2}
-      maxWidth="800px"  
+      maxWidth="1000px"
       mx="auto"
     >
       <FormControl size="small" sx={{ minWidth: "150px" }}>
@@ -128,15 +171,40 @@ function FilterOptions({ infoTable, handleSetFilter, defaultOperator, defaultCol
         </Select>
       </FormControl>
 
-      <TextField
-        size="small"
-        label={selectedColumn.label}
-        type={selectedColumn.type}
-        placeholder={`Enter ${selectedColumn.label}`}
-        value={inputValue}
-        onChange={handleInputChange}
-        sx={{ flex: 1 }}
-      />
+      {selectedOperator === "Between" || selectedOperator === "Not between" ? (
+        <Box display="flex" gap={1}>
+          <TextField
+            size="small"
+            label="From"
+            type="date"
+            name="from"
+            placeholder="From"
+            value={rangeValues.from} 
+            onChange={handleRangeChange}
+            inputProps={isDisabled("from")}
+          />
+          <TextField
+            size="small"
+            label="To"
+            type="date"
+            name="to"
+            placeholder="To"
+            value={rangeValues.to} 
+            onChange={handleRangeChange}
+            inputProps={isDisabled("to")}
+          />
+        </Box>
+      ) : (
+        <TextField
+          size="small"
+          label={selectedColumn.label}
+          type={selectedColumn.type}
+          placeholder={`Enter ${selectedColumn.label}`}
+          value={inputValue}
+          onChange={handleInputChange}
+          sx={{ flex: 1 }}
+        />
+      )}
 
       <Button
         onClick={onSubmit}
@@ -149,7 +217,6 @@ function FilterOptions({ infoTable, handleSetFilter, defaultOperator, defaultCol
       >
         Configure
       </Button>
-
     </Box>
   );
 }
