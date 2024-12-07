@@ -15,11 +15,6 @@ const FilterButton = ({ infoTable, path}) => {
     setAnchorEl(null);
   };
 
-  const handleSetFilter = (filter) => {
-    handleFilter(filter);
-    closeMenu(); 
-  };
-
   return (
     <Box className="relative">
       <Button

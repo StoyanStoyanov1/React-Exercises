@@ -20,23 +20,23 @@ const operators = {
     "<=": "lte",
     "<": "lt",
     "!=": "neq",
-    Between: "between",
+    "Between": "between",
     "Not between": "not_between",
   },
   date: {
     "Is equal to": "eq",
     "Is not equal to": "neq",
-    Before: "lt",
+    "Before": "lt",
     "On or before": "lte",
-    After: "gt",
+    "After": "gt",
     "On or after": "gte",
-    Between: "between",
+    "Between": "between",
     "Not between": "not_between",
   },
   string: {
     "Is equal to": "eq",
     "Is not equal to": "neq",
-    Contains: "contains",
+    "Contains": "contains",
     "Does not contain": "ncontains",
     "Starts with": "startswith",
     "Ends with": "endswith",
@@ -107,6 +107,7 @@ function FilterOptions({ infoTable, path, defaultOperator, defaultColumn }) {
 
   const onSubmit = () => {
     const operatorIsBetweenOrNotBetweeen = selectedOperator === "Between" || selectedOperator === "Not between";
+    const currentOperator = operators[selectedColumn.type][selectedOperator];
 
     if (operatorIsBetweenOrNotBetweeen) {
       if (!rangeValues.from.trim() || !rangeValues.to.trim()) {
@@ -121,12 +122,21 @@ function FilterOptions({ infoTable, path, defaultOperator, defaultColumn }) {
       }
 
     }
-
+    
     const objFilter = {
-      field: selectedColumn.field,
-      value: operatorIsBetweenOrNotBetweeen ? `${rangeValues.from}to${rangeValues.to}` :inputValue.trim(),
-      operator: operators[selectedColumn.type][selectedOperator],
+      ...(
+        operatorIsBetweenOrNotBetweeen
+          ? {
+              [`${selectedColumn.field}_from`]: rangeValues.from,
+              [`${selectedColumn.field}_to`]: rangeValues.to,
+            }
+          : {
+              [`${selectedColumn.field}_${currentOperator}`]: inputValue.trim(),
+            }
+      ),
+      
     };
+  
 
     const queryParams = new URLSearchParams(objFilter).toString();
     navigate(`/${path}?${queryParams}`);
