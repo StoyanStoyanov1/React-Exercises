@@ -1,15 +1,205 @@
-import React, { useState } from 'react';
-import { ChevronDown, ChevronRight, Move, Tag, Plus, Settings, Search } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { ChevronDown, ChevronRight, Move, Tag, Plus, Settings, Search, X, Check } from 'lucide-react';
 import applyColorsToTree from "./applyColorsToTree.js";
+
+const Modal = ({ isOpen, title, message, onConfirm, onCancel, children }) => {
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-xl w-96 overflow-hidden transform transition-all">
+                <div className="px-6 py-4 bg-gray-50 border-b flex items-center justify-between">
+                    <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+                    <button
+                        className="text-gray-400 hover:text-gray-500"
+                        onClick={onCancel}
+                    >
+                        <X size={20} />
+                    </button>
+                </div>
+                <div className="px-6 py-4">
+                    {message && <p className="text-gray-700 mb-4">{message}</p>}
+                    {children}
+                </div>
+                <div className="px-6 py-3 bg-gray-50 flex justify-end space-x-3">
+                    <button
+                        className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
+                        onClick={onCancel}
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                        onClick={onConfirm}
+                    >
+                        Confirm
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const TreeView = ({
                       data,
-                      title = "Item Management",
+                      title = "Title",
                   }) => {
     const [currentData, setCurrentData] = useState(applyColorsToTree(data));
     const [draggedItem, setDraggedItem] = useState(null);
     const [dropTarget, setDropTarget] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalContent, setModalContent] = useState(null);
+    const [modalConfig, setModalConfig] = useState({
+        title: '',
+        message: '',
+        onConfirm: () => {},
+        onCancel: () => {}
+    });
+
+    // State for adding new category
+    const [newCategoryName, setNewCategoryName] = useState('');
+    const [addingToParent, setAddingToParent] = useState(null);
+    const [nextId, setNextId] = useState(1000); // Starting ID for new categories
+
+    const showModal = (title, message, onConfirm, modalContent = null) => {
+        setModalConfig({
+            title,
+            message,
+            onConfirm: () => {
+                onConfirm();
+                setIsModalOpen(false);
+            },
+            onCancel: () => {
+                setIsModalOpen(false);
+                setNewCategoryName('');
+            }
+        });
+        setModalContent(modalContent);
+        setIsModalOpen(true);
+    };
+
+    // Function to open add category modal
+    const handleAddCategory = (parentItem) => {
+        setAddingToParent(parentItem);
+        setNewCategoryName('');
+
+        const content = (
+            <div>
+                <label htmlFor="categoryName" className="block text-sm font-medium text-gray-700 mb-1">
+                    Category Name
+                </label>
+                <input
+                    type="text"
+                    id="categoryName"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    placeholder="Enter category name"
+                    autoFocus
+                />
+            </div>
+        );
+
+        showModal(
+            "Add New Category",
+            `Adding new category to "${parentItem.name}"`,
+            () => {
+                if (newCategoryName.trim()) {
+                    addCategory(parentItem.id, newCategoryName);
+                }
+                setNewCategoryName('');
+            },
+            content
+        );
+    };
+
+    // Function to add new category to parent
+    const addCategory = (parentId, categoryName) => {
+        const newCategoryId = nextId;
+        setNextId(nextId + 1);
+
+        // Create new category
+        const newCategory = {
+            id: newCategoryId,
+            name: categoryName,
+            children: [],
+            color: addingToParent.color, // Inherit parent's color
+            expanded: false
+        };
+
+        // Add to parent
+        const updateParentChildren = (items) => {
+            return items.map(item => {
+                if (item.id === parentId) {
+                    return {
+                        ...item,
+                        children: [...(item.children || []), newCategory],
+                        expanded: true // Auto-expand parent
+                    };
+                } else if (item.children && item.children.length > 0) {
+                    return {
+                        ...item,
+                        children: updateParentChildren(item.children)
+                    };
+                }
+                return item;
+            });
+        };
+
+        setCurrentData(updateParentChildren(currentData));
+    };
+
+    // Function to handle add root category
+    const handleAddRootCategory = () => {
+        setNewCategoryName('');
+
+        const content = (
+            <div>
+                <label htmlFor="categoryName" className="block text-sm font-medium text-gray-700 mb-1">
+                    Category Name
+                </label>
+                <input
+                    type="text"
+                    id="categoryName"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    placeholder="Enter category name"
+                    autoFocus
+                />
+            </div>
+        );
+
+        showModal(
+            "Add Root Category",
+            "Add a new top-level category",
+            () => {
+                if (newCategoryName.trim()) {
+                    const newCategoryId = nextId;
+                    setNextId(nextId + 1);
+
+                    // Generate a color for the new root category
+                    const colors = ['#3498db', '#2ecc71', '#9b59b6', '#f39c12', '#1abc9c', '#34495e'];
+                    const color = colors[currentData.length % colors.length];
+
+                    // Create new root category
+                    const newCategory = {
+                        id: newCategoryId,
+                        name: newCategoryName,
+                        children: [],
+                        color: color,
+                        expanded: false
+                    };
+
+                    // Add to root
+                    setCurrentData([...currentData, newCategory]);
+                    setNewCategoryName('');
+                }
+            },
+            content
+        );
+    };
 
     // Function to determine contrasting text color
     const getTextColor = (bgColor) => {
@@ -47,7 +237,6 @@ const TreeView = ({
         setCurrentData(updateExpanded(currentData));
     };
 
-    // Функция за намиране на родител на елемент по ID
     const findParent = (items, id, parent = null) => {
         for (const item of items) {
             if (item.id === id) {
@@ -61,7 +250,6 @@ const TreeView = ({
         return null;
     };
 
-    // Функция за намиране на елемент по ID
     const findItem = (items, id) => {
         for (const item of items) {
             if (item.id === id) {
@@ -75,7 +263,7 @@ const TreeView = ({
         return null;
     };
 
-    // Функция за клониране на дърво без определен елемент
+    // Function for cloning tree without specific item
     const cloneTreeWithoutItem = (items, id) => {
         return items.reduce((acc, item) => {
             if (item.id === id) {
@@ -99,7 +287,6 @@ const TreeView = ({
     const handleDragOver = (e, item) => {
         e.preventDefault();
         if (draggedItem && item.id !== draggedItem.id) {
-            // Check if the target is not a child of the dragged item
             const isChild = findItem(draggedItem.children || [], item.id);
             if (!isChild) {
                 setDropTarget(item);
@@ -115,39 +302,76 @@ const TreeView = ({
             return;
         }
 
-        // Step 1: Create a copy of the data structure without the dragged item
-        const dataWithoutDragged = cloneTreeWithoutItem(currentData, draggedItem.id);
+        // Show modal dialog instead of confirm
+        showModal(
+            "Confirm Move",
+            `Are you sure you want to move "${draggedItem.name}" to "${target.name}"?`,
+            () => {
+                // Code for moving on confirmation
+                const dataWithoutDragged = cloneTreeWithoutItem(currentData, draggedItem.id);
 
-        // Step 2: Find the target in the new structure
-        const updateTargetChildren = (items) => {
-            return items.map(item => {
-                if (item.id === target.id) {
-                    // Add the dragged item to this target's children
-                    const children = item.children || [];
-                    return {
-                        ...item,
-                        children: [...children, { ...draggedItem, parentId: target.id }],
-                        expanded: true // Auto-expand the target
-                    };
-                } else if (item.children && item.children.length > 0) {
-                    return {
-                        ...item,
-                        children: updateTargetChildren(item.children)
-                    };
-                }
-                return item;
-            });
-        };
+                const updateTargetChildren = (items) => {
+                    return items.map(item => {
+                        if (item.id === target.id) {
+                            const children = item.children || [];
+                            return {
+                                ...item,
+                                children: [...children, { ...draggedItem, parentId: target.id }],
+                                expanded: true
+                            };
+                        } else if (item.children && item.children.length > 0) {
+                            return {
+                                ...item,
+                                children: updateTargetChildren(item.children)
+                            };
+                        }
+                        return item;
+                    });
+                };
 
-        const newData = updateTargetChildren(dataWithoutDragged);
-        setCurrentData(newData);
+                const newData = updateTargetChildren(dataWithoutDragged);
+                setCurrentData(newData);
+                setDropTarget(null);
+                setDraggedItem(null);
+            }
+        );
 
+        // These will execute immediately, regardless of confirmation
         setDropTarget(null);
         setDraggedItem(null);
-
-        // Show confirmation
-        alert(`Moved "${draggedItem.name}" to "${target.name}"`);
     };
+
+    // Filter the data based on search term
+    const filteredData = React.useMemo(() => {
+        if (!searchTerm.trim()) return currentData;
+
+        // Recursive function to search through the tree
+        const filterItems = (items) => {
+            return items.reduce((filtered, item) => {
+                // Check if the current item matches
+                const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+
+                // Filter children recursively
+                let filteredChildren = [];
+                if (item.children && item.children.length > 0) {
+                    filteredChildren = filterItems(item.children);
+                }
+
+                // Include the item if it matches or has matching children
+                if (matchesSearch || filteredChildren.length > 0) {
+                    return [...filtered, {
+                        ...item,
+                        expanded: filteredChildren.length > 0 ? true : item.expanded, // Auto-expand if has matching children
+                        children: filteredChildren
+                    }];
+                }
+
+                return filtered;
+            }, []);
+        };
+
+        return filterItems(currentData);
+    }, [currentData, searchTerm]);
 
     const renderTreeItem = (item, level = 0) => {
         const isDropTarget = dropTarget?.id === item.id;
@@ -186,8 +410,8 @@ const TreeView = ({
                         </div>
                         {item.children && item.children.length > 0 && (
                             <span className="ml-2 text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full">
-                                {item.children.length}
-                            </span>
+                {item.children.length}
+              </span>
                         )}
                     </div>
 
@@ -195,7 +419,13 @@ const TreeView = ({
                         <button className="p-1.5 mr-1.5 bg-gray-800 hover:bg-gray-700 rounded-md text-white transition-all shadow-sm">
                             <Tag size={16} />
                         </button>
-                        <button className="p-1.5 mr-1.5 bg-gray-800 hover:bg-gray-700 rounded-md text-white transition-all shadow-sm">
+                        <button
+                            className="p-1.5 mr-1.5 bg-gray-800 hover:bg-gray-700 rounded-md text-white transition-all shadow-sm"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleAddCategory(item);
+                            }}
+                        >
                             <Plus size={16} />
                         </button>
                         <button
@@ -236,10 +466,17 @@ const TreeView = ({
             return;
         }
 
-        const newData = cloneTreeWithoutItem(currentData, draggedItem.id);
-        setCurrentData(newData);
-
-        alert(`"${draggedItem.name}" has been deleted!`);
+        // Show modal dialog instead of alert
+        showModal(
+            "Confirm Delete",
+            `Are you sure you want to delete "${draggedItem.name}"?`,
+            () => {
+                const newData = cloneTreeWithoutItem(currentData, draggedItem.id);
+                setCurrentData(newData);
+                setIsTrashHover(false);
+                setDraggedItem(null);
+            }
+        );
 
         setIsTrashHover(false);
         setDraggedItem(null);
@@ -247,10 +484,23 @@ const TreeView = ({
 
     return (
         <div className="w max-w-3xl bg-white rounded-lg shadow-md p-4">
+            <Modal
+                isOpen={isModalOpen}
+                title={modalConfig.title}
+                message={modalConfig.message}
+                onConfirm={modalConfig.onConfirm}
+                onCancel={modalConfig.onCancel}
+            >
+                {modalContent}
+            </Modal>
+
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold text-gray-800">{title}</h2>
                 <div className="flex">
-                    <button className="p-2 mr-2 bg-gray-100 rounded-md hover:bg-gray-200 text-gray-700">
+                    <button
+                        className="p-2 mr-2 bg-gray-100 rounded-md hover:bg-gray-200 text-gray-700"
+                        onClick={handleAddRootCategory}
+                    >
                         <Plus size={18} />
                     </button>
                     <button className="p-2 bg-gray-100 rounded-md hover:bg-gray-200 text-gray-700">
@@ -302,13 +552,13 @@ const TreeView = ({
                         <line x1="14" y1="11" x2="14" y2="17"></line>
                     </svg>
                     <span className={`ml-2 ${isTrashHover ? 'text-red-500 font-medium' : 'text-gray-600 font-medium'}`}>
-                        Delete item
-                    </span>
+            Delete item
+          </span>
                 </div>
             </div>
 
             <div className="border border-gray-200 rounded-md p-2 bg-gray-50">
-                {currentData.map(item => renderTreeItem(item))}
+                {filteredData.map(item => renderTreeItem(item))}
             </div>
 
             <div className="mt-4 text-sm text-gray-600">
