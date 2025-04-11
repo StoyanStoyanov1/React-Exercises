@@ -1,44 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, Move, Tag, Plus, Settings, Search, X, Check } from 'lucide-react';
 import applyColorsToTree from "./applyColorsToTree.js";
-
-const Modal = ({ isOpen, title, message, onConfirm, onCancel, children }) => {
-    if (!isOpen) return null;
-
-    return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-xl w-96 overflow-hidden transform transition-all">
-                <div className="px-6 py-4 bg-gray-50 border-b flex items-center justify-between">
-                    <h3 className="text-lg font-medium text-gray-900">{title}</h3>
-                    <button
-                        className="text-gray-400 hover:text-gray-500"
-                        onClick={onCancel}
-                    >
-                        <X size={20} />
-                    </button>
-                </div>
-                <div className="px-6 py-4">
-                    {message && <p className="text-gray-700 mb-4">{message}</p>}
-                    {children}
-                </div>
-                <div className="px-6 py-3 bg-gray-50 flex justify-end space-x-3">
-                    <button
-                        className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
-                        onClick={onCancel}
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                        onClick={onConfirm}
-                    >
-                        Confirm
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-};
+import Modal from "./Modal";
 
 const TreeView = ({
                       data,
@@ -56,11 +19,12 @@ const TreeView = ({
         onConfirm: () => {},
         onCancel: () => {}
     });
+    const [isRootDropAreaActive, setIsRootDropAreaActive] = useState(false);
 
     // State for adding new category
     const [newCategoryName, setNewCategoryName] = useState('');
     const [addingToParent, setAddingToParent] = useState(null);
-    const [nextId, setNextId] = useState(1000); // Starting ID for new categories
+    const [nextId, setNextId] = useState(1000);
 
     const showModal = (title, message, onConfirm, modalContent = null) => {
         setModalConfig({
@@ -79,7 +43,6 @@ const TreeView = ({
         setIsModalOpen(true);
     };
 
-    // Function to open add category modal
     const handleAddCategory = (parentItem) => {
         setAddingToParent(parentItem);
         setNewCategoryName('');
@@ -114,12 +77,10 @@ const TreeView = ({
         );
     };
 
-    // Function to add new category to parent
     const addCategory = (parentId, categoryName) => {
         const newCategoryId = nextId;
         setNextId(nextId + 1);
 
-        // Create new category
         const newCategory = {
             id: newCategoryId,
             name: categoryName,
@@ -128,7 +89,6 @@ const TreeView = ({
             expanded: false
         };
 
-        // Add to parent
         const updateParentChildren = (items) => {
             return items.map(item => {
                 if (item.id === parentId) {
@@ -150,7 +110,6 @@ const TreeView = ({
         setCurrentData(updateParentChildren(currentData));
     };
 
-    // Function to handle add root category
     const handleAddRootCategory = () => {
         setNewCategoryName('');
 
@@ -179,11 +138,9 @@ const TreeView = ({
                     const newCategoryId = nextId;
                     setNextId(nextId + 1);
 
-                    // Generate a color for the new root category
                     const colors = ['#3498db', '#2ecc71', '#9b59b6', '#f39c12', '#1abc9c', '#34495e'];
                     const color = colors[currentData.length % colors.length];
 
-                    // Create new root category
                     const newCategory = {
                         id: newCategoryId,
                         name: newCategoryName,
@@ -192,7 +149,6 @@ const TreeView = ({
                         expanded: false
                     };
 
-                    // Add to root
                     setCurrentData([...currentData, newCategory]);
                     setNewCategoryName('');
                 }
@@ -201,11 +157,9 @@ const TreeView = ({
         );
     };
 
-    // Function to determine contrasting text color
     const getTextColor = (bgColor) => {
-        // Convert hex color to RGB
         const hexToRgb = (hex) => {
-            const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+            const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])([a-f\d])$/i;
             const fullHex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(fullHex);
 
@@ -294,6 +248,68 @@ const TreeView = ({
         }
     };
 
+    // Handle drag over root area
+    const handleRootDragOver = (e) => {
+        e.preventDefault();
+        if (draggedItem) {
+            setIsRootDropAreaActive(true);
+            setDropTarget(null);
+        }
+    };
+
+    // Handle drag leave for root area
+    const handleRootDragLeave = () => {
+        setIsRootDropAreaActive(false);
+    };
+
+    // Handle drop on root area
+    const handleRootDrop = (e) => {
+        e.preventDefault();
+        if (!draggedItem) {
+            setIsRootDropAreaActive(false);
+            return;
+        }
+
+        showModal(
+            "Move to Root Level",
+            `Are you sure you want to move "${draggedItem.name}" to the root level?`,
+            () => {
+                // Remove the item from its current location
+                const dataWithoutDragged = cloneTreeWithoutItem(currentData, draggedItem.id);
+
+                // Check if it already exists at the root level
+                const existsAtRoot = currentData.some(item => item.id === draggedItem.id);
+
+                // If it's not already a root item, add it to root
+                if (!existsAtRoot) {
+                    // Create a new colors array for assigning colors to new root items
+                    const colors = ['#3498db', '#2ecc71', '#9b59b6', '#f39c12', '#1abc9c', '#34495e'];
+                    const color = colors[currentData.length % colors.length];
+
+                    // Create a deep copy of the dragged item
+                    const newRootItem = JSON.parse(JSON.stringify(draggedItem));
+
+                    // Function to recursively update colors
+                    const updateItemColors = (item, newColor) => {
+                        item.color = newColor;
+                        if (item.children && item.children.length > 0) {
+                            item.children.forEach(child => updateItemColors(child, newColor));
+                        }
+                    };
+
+                    // Update colors for the root item and all its descendants
+                    updateItemColors(newRootItem, color);
+
+                    // Add the item to the root level
+                    setCurrentData([...dataWithoutDragged, newRootItem]);
+                }
+            }
+        );
+
+        setIsRootDropAreaActive(false);
+        setDraggedItem(null);
+    };
+
     const handleDrop = (e, target) => {
         e.preventDefault();
         if (!draggedItem || target.id === draggedItem.id) {
@@ -314,9 +330,25 @@ const TreeView = ({
                     return items.map(item => {
                         if (item.id === target.id) {
                             const children = item.children || [];
+                            // Update draggedItem and all its children to have the same color as the new parent
+                            // First, make a deep copy of the draggedItem
+                            const updatedDraggedItem = JSON.parse(JSON.stringify(draggedItem));
+
+                            // Function to recursively update colors
+                            const updateItemColors = (item, newColor) => {
+                                item.color = newColor;
+                                if (item.children && item.children.length > 0) {
+                                    item.children.forEach(child => updateItemColors(child, newColor));
+                                }
+                            };
+
+                            // Update colors for the dragged item and all its descendants
+                            updateItemColors(updatedDraggedItem, target.color);
+                            updatedDraggedItem.parentId = target.id;
+
                             return {
                                 ...item,
-                                children: [...children, { ...draggedItem, parentId: target.id }],
+                                children: [...children, updatedDraggedItem],
                                 expanded: true
                             };
                         } else if (item.children && item.children.length > 0) {
@@ -401,17 +433,16 @@ const TreeView = ({
                         <div
                             className="ml-2 font-medium px-2 py-1 rounded-md"
                             style={{
-                                backgroundColor: item.color,
-                                color: textColor,
-                                fontWeight: 500
+                                color: item.color,
+                                fontWeight: 700
                             }}
                         >
                             {item.name}
                         </div>
                         {item.children && item.children.length > 0 && (
                             <span className="ml-2 text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full">
-                {item.children.length}
-              </span>
+                                {item.children.length}
+                            </span>
                         )}
                     </div>
 
@@ -522,38 +553,67 @@ const TreeView = ({
                 />
             </div>
 
-            <div className="mb-2 flex items-center justify-between">
+            <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center">
                     <span className="mr-2 text-sm font-medium text-gray-700">Use <Move size={14} className="inline text-gray-600 mx-1"/> icon to drag items</span>
                 </div>
 
-                <div
-                    className={`flex items-center p-2 rounded-md transition-all ${isTrashHover ? 'bg-red-100' : 'bg-gray-100'} ${draggedItem ? 'border-2 border-dashed border-red-400' : ''}`}
-                    onDragOver={handleTrashDragOver}
-                    onDragLeave={handleTrashDragLeave}
-                    onDrop={handleTrashDrop}
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke={isTrashHover ? "#e74c3c" : "#000"}
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className={`transition-all ${isTrashHover ? 'scale-110' : ''}`}
+                <div className="flex space-x-3">
+                    {/* New Root Drop Area */}
+                    <div
+                        className={`flex items-center p-2 rounded-md transition-all ${isRootDropAreaActive ? 'bg-green-100 border-2 border-green-500' : 'bg-gray-100'} ${draggedItem ? 'border-2 border-dashed border-green-400' : ''}`}
+                        onDragOver={handleRootDragOver}
+                        onDragLeave={handleRootDragLeave}
+                        onDrop={handleRootDrop}
                     >
-                        <path d="M3 6h18"></path>
-                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                        <line x1="10" y1="11" x2="10" y2="17"></line>
-                        <line x1="14" y1="11" x2="14" y2="17"></line>
-                    </svg>
-                    <span className={`ml-2 ${isTrashHover ? 'text-red-500 font-medium' : 'text-gray-600 font-medium'}`}>
-            Delete item
-          </span>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke={isRootDropAreaActive ? "#27ae60" : "#000"}
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className={`transition-all ${isRootDropAreaActive ? 'scale-110' : ''}`}
+                        >
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                        <span className={`ml-2 ${isRootDropAreaActive ? 'text-green-600 font-medium' : 'text-gray-600 font-medium'}`}>
+                            Move to root
+                        </span>
+                    </div>
+
+                    {/* Trash Drop Area */}
+                    <div
+                        className={`flex items-center p-2 rounded-md transition-all ${isTrashHover ? 'bg-red-100' : 'bg-gray-100'} ${draggedItem ? 'border-2 border-dashed border-red-400' : ''}`}
+                        onDragOver={handleTrashDragOver}
+                        onDragLeave={handleTrashDragLeave}
+                        onDrop={handleTrashDrop}
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke={isTrashHover ? "#e74c3c" : "#000"}
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className={`transition-all ${isTrashHover ? 'scale-110' : ''}`}
+                        >
+                            <path d="M3 6h18"></path>
+                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                        <span className={`ml-2 ${isTrashHover ? 'text-red-500 font-medium' : 'text-gray-600 font-medium'}`}>
+                            Delete item
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -562,7 +622,7 @@ const TreeView = ({
             </div>
 
             <div className="mt-4 text-sm text-gray-600">
-                <p>* Drag items to the trash to delete them or onto other items to move them</p>
+                <p>* Drag items to the trash to delete them, to other items to move them, or to "Move to root" to make them top-level items</p>
             </div>
         </div>
     );

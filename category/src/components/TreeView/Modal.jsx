@@ -1,7 +1,7 @@
 import {X} from "lucide-react";
 import React from "react";
 
-const Modal = ({ isOpen, title, message, onConfirm, onCancel }) => {
+export const Modal = ({ isOpen, title, message, onConfirm, onCancel, children }) => {
     if (!isOpen) return null;
 
     return (
@@ -17,7 +17,8 @@ const Modal = ({ isOpen, title, message, onConfirm, onCancel }) => {
                     </button>
                 </div>
                 <div className="px-6 py-4">
-                    <p className="text-gray-700">{message}</p>
+                    {message && <p className="text-gray-700 mb-4">{message}</p>}
+                    {children}
                 </div>
                 <div className="px-6 py-3 bg-gray-50 flex justify-end space-x-3">
                     <button
@@ -39,3 +40,4 @@ const Modal = ({ isOpen, title, message, onConfirm, onCancel }) => {
 };
 
 export default Modal;
+

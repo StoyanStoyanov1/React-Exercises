@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import CategoryComponent from "../components/category/ThreeView.jsx";
+import CategoryComponent from "../components/TreeView/ThreeView.jsx";
 import {data} from "../data/data.js";
 
 const Category = () => {
