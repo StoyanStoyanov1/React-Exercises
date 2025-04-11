@@ -1,11 +1,12 @@
-import { useState } from 'react'
-import Categories from "./pages/categories.jsx";
+import './App.css'
+import Category from "./pages/Category.jsx";
+
 function App() {
 
   return (
-    <div>
-      <Categories />
-    </div>
+      <div className='root'>
+        <Category />
+      </div>
   )
 }
 
