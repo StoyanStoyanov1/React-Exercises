@@ -1,22 +1,45 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X, Check } from 'lucide-react';
 import { countAllDescendants } from './utils';
 
 const SelectItem = ({
-                            isOpen,
-                            onClose,
-                            categories,
-                            selectedCategories,
-                            onCategoryToggle,
-                            onSelectAll,
-                            onDeselectAll,
-                            onApplyFilter
-                        }) => {
+                        isOpen,
+                        onClose,
+                        categories,
+                        selectedCategories,
+                        onCategoryToggle,
+                        onSelectAll,
+                        onDeselectAll,
+                        onApplyFilter
+                    }) => {
+    // Add event listener for ESC key
+    useEffect(() => {
+        const handleEscapeKey = (e) => {
+            if (e.key === 'Escape' && isOpen) {
+                onClose();
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener('keydown', handleEscapeKey);
+            // Prevent scrolling of the body when modal is open
+            document.body.style.overflow = 'hidden';
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleEscapeKey);
+            document.body.style.overflow = 'auto';
+        };
+    }, [isOpen, onClose]);
+
     if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="fixed inset-0 bg-black opacity-50" onClick={onClose}></div>
+            <div
+                className="fixed inset-0 bg-black opacity-50"
+                onClick={onClose}
+            ></div>
             <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md z-10 max-h-[80vh] overflow-y-auto">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl font-semibold text-gray-800">Select Categories</h2>
@@ -46,22 +69,24 @@ const SelectItem = ({
                 <div className="space-y-2">
                     {categories.map(category => {
                         const totalDescendants = countAllDescendants(category);
+                        const isSelected = selectedCategories.includes(category.id);
+
                         return (
                             <div
                                 key={category.id}
                                 className={`flex items-center p-2 rounded-md cursor-pointer hover:bg-gray-100 transition-colors
-                                    ${selectedCategories.includes(category.id) ? 'border-l-4' : 'border-l-4 border-transparent'}`}
+                                    ${isSelected ? 'border-l-4' : 'border-l-4 border-transparent'}`}
                                 style={{
-                                    borderLeftColor: selectedCategories.includes(category.id) ? category.color : 'transparent'
+                                    borderLeftColor: isSelected ? category.color : 'transparent'
                                 }}
                                 onClick={() => onCategoryToggle(category.id)}
                             >
                                 <div className={`w-5 h-5 rounded flex items-center justify-center mr-3 
-                                    ${selectedCategories.includes(category.id)
+                                    ${isSelected
                                     ? 'bg-blue-600 text-white'
                                     : 'border border-gray-300'}`}
                                 >
-                                    {selectedCategories.includes(category.id) && <Check size={14} />}
+                                    {isSelected && <Check size={14} />}
                                 </div>
 
                                 <div className="flex-1">

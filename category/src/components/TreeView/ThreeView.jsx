@@ -28,8 +28,11 @@ const TreeView = ({ data, title = "Title" }) => {
 
     useEffect(() => {
         const rootCategoryIds = currentData.map(category => category.id);
-        setSelectedCategories(rootCategoryIds);
-        setAppliedCategoryFilter(rootCategoryIds);
+        // Only initialize once when the component mounts or when currentData changes its structure
+        if (selectedCategories.length === 0 || appliedCategoryFilter.length === 0) {
+            setSelectedCategories(rootCategoryIds);
+            setAppliedCategoryFilter(rootCategoryIds);
+        }
     }, [currentData]);
 
     const [draggedItem, setDraggedItem] = useState(null);
@@ -378,6 +381,7 @@ const TreeView = ({ data, title = "Title" }) => {
             <SelectItem
                 isOpen={isFilterOpen}
                 onClose={() => {
+                    // When closing without applying, reset to the last applied filter
                     setSelectedCategories(appliedCategoryFilter);
                     setIsFilterOpen(false);
                 }}
