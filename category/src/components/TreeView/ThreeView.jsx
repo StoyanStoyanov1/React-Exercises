@@ -52,23 +52,12 @@ const TreeView = ({ data, title = "Title" }) => {
             selectedCategories.includes(category.id)
         );
 
+        if (searchTerm.trim() === '') {
+            return categoryFiltered;
+        }
+
         return filterTreeBySearchTerm(categoryFiltered, searchTerm);
     }, [currentData, selectedCategories, searchTerm]);
-
-    useEffect(() => {
-        const handleDragEnd = () => {
-            setIsDragging(false);
-            setDropTarget(null);
-            setDraggedItem(null);
-            setIsRootDropAreaActive(false);
-        };
-
-        document.addEventListener('dragend', handleDragEnd);
-
-        return () => {
-            document.removeEventListener('dragend', handleDragEnd);
-        };
-    }, []);
 
     const showModal = (title, message, onConfirm) => {
         const confirmHandler = () => {

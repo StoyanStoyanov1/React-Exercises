@@ -32,11 +32,6 @@ export const findItem = (items, id) => {
     return null;
 };
 
-/**
- * Recursively counts all descendants of an item (children, grandchildren, etc.)
- * @param {Object} item - The category item
- * @returns {number} - Total number of descendants
- */
 export const countAllDescendants = (item) => {
     if (!item.children || item.children.length === 0) {
         return 0;
@@ -51,14 +46,6 @@ export const countAllDescendants = (item) => {
     return count;
 };
 
-/**
- * Checks if an item is a descendant of another item with the given ID
- * This prevents creating circular references in the category tree
- *
- * @param {Object} item - The potential child item
- * @param {number|string} potentialParentId - ID of the potential parent
- * @returns {boolean} - True if the item is a descendant of the specified parent ID
- */
 export const isDescendantOf = (item, potentialParentId) => {
     if (!item || !item.children) return false;
 
@@ -112,15 +99,20 @@ export const filterTreeBySearchTerm = (items, searchTerm) => {
     return items.reduce((filtered, item) => {
         const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
 
+        if (matchesSearch) {
+            return [...filtered, {
+                ...item,
+            }];
+        }
+
         let filteredChildren = [];
         if (item.children && item.children.length > 0) {
             filteredChildren = filterTreeBySearchTerm(item.children, searchTerm);
         }
 
-        if (matchesSearch || filteredChildren.length > 0) {
+        if (filteredChildren.length > 0) {
             return [...filtered, {
                 ...item,
-                expanded: filteredChildren.length > 0 ? true : item.expanded,
                 children: filteredChildren
             }];
         }
