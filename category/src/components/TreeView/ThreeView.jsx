@@ -12,7 +12,8 @@ import {
     filterTreeBySearchTerm,
     updateItemColors,
     findItem,
-    getColorFromPalette
+    getColorFromPalette,
+    isDescendantOf
 } from './utils';
 
 const TreeView = ({ data, title = "Title" }) => {
@@ -136,16 +137,29 @@ const TreeView = ({ data, title = "Title" }) => {
     const handleDragOver = (e, item) => {
         e.preventDefault();
         if (draggedItem && item.id !== draggedItem.id) {
-            const isChild = findItem(draggedItem.children || [], item.id);
-            if (!isChild) {
-                setDropTarget(item);
+            // Проверка дали целта не е наследник на влачения елемент
+            if (isDescendantOf(item, draggedItem.id)) {
+                return;
             }
+            setDropTarget(item);
         }
     };
 
     const handleDrop = (e, target) => {
         e.preventDefault();
         if (!draggedItem || target.id === draggedItem.id) {
+            setDropTarget(null);
+            setDraggedItem(null);
+            return;
+        }
+
+        // Проверка дали целта не е наследник на влачения елемент
+        if (isDescendantOf(target, draggedItem.id)) {
+            showModal(
+                "Invalid Operation",
+                "Cannot move a parent category into one of its children",
+                () => {}
+            );
             setDropTarget(null);
             setDraggedItem(null);
             return;
@@ -194,7 +208,6 @@ const TreeView = ({ data, title = "Title" }) => {
         e.preventDefault();
         if (draggedItem) {
             setIsRootDropAreaActive(true);
-            setDropTarget(null);
         }
     };
 
@@ -311,11 +324,7 @@ const TreeView = ({ data, title = "Title" }) => {
 
             <TreeActions
                 draggedItem={draggedItem}
-                isRootActive={isRootDropAreaActive}
                 isTrashActive={isTrashHover}
-                handleRootDragOver={handleRootDragOver}
-                handleRootDragLeave={handleRootDragLeave}
-                handleRootDrop={handleRootDrop}
                 handleTrashDragOver={handleTrashDragOver}
                 handleTrashDragLeave={handleTrashDragLeave}
                 handleTrashDrop={handleTrashDrop}
@@ -335,10 +344,24 @@ const TreeView = ({ data, title = "Title" }) => {
                         handleAddCategory={handleAddCategory}
                     />
                 ))}
+
+                {/* Root drop area at the bottom - only visible when dragging */}
+                {draggedItem && (
+                    <div
+                        className={`mt-2 p-2 border-2 rounded-md transition-all ${isRootDropAreaActive ? 'border-green-500 bg-green-50' : 'border-dashed border-gray-300'} cursor-pointer`}
+                        onDragOver={handleRootDragOver}
+                        onDragLeave={handleRootDragLeave}
+                        onDrop={handleRootDrop}
+                    >
+                        <div className="text-center text-sm font-medium text-gray-500">
+                            Drop here to move to root level
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div className="mt-4 text-sm text-gray-600">
-                <p>* Drag items to the trash to delete them, to other items to move them, or to "Move to root" to make them top-level items</p>
+                <p>* When dragging: use the trash icon to delete items, drop on other items to move them, or use the bottom drop area to make them top-level items</p>
             </div>
         </div>
     );

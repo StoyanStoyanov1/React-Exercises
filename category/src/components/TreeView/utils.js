@@ -18,6 +18,8 @@ export const getTextColor = (bgColor) => {
 };
 
 export const findItem = (items, id) => {
+    if (!items) return null;
+
     for (const item of items) {
         if (item.id === id) {
             return item;
@@ -28,6 +30,22 @@ export const findItem = (items, id) => {
         }
     }
     return null;
+};
+
+// Check if an item is a descendant of another item with the given ID
+export const isDescendantOf = (item, potentialParentId) => {
+    if (!item || !item.children) return false;
+
+    for (const child of item.children) {
+        if (child.id === potentialParentId) {
+            return true;
+        }
+        if (isDescendantOf(child, potentialParentId)) {
+            return true;
+        }
+    }
+
+    return false;
 };
 
 export const cloneTreeWithoutItem = (items, id) => {

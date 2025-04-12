@@ -1,41 +1,6 @@
 import React from 'react';
 import { Move } from 'lucide-react';
 
-export const RootDropArea = ({
-                                 isActive,
-                                 draggedItem,
-                                 onDragOver,
-                                 onDragLeave,
-                                 onDrop
-                             }) => {
-    return (
-        <div
-            className={`flex items-center p-2 rounded-md transition-all ${isActive ? 'bg-green-100 border-2 border-green-500' : 'bg-gray-100'} ${draggedItem ? 'border-2 border-dashed border-green-400' : ''}`}
-            onDragOver={onDragOver}
-            onDragLeave={onDragLeave}
-            onDrop={onDrop}
-        >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke={isActive ? "#27ae60" : "#000"}
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className={`transition-all ${isActive ? 'scale-110' : ''}`}
-            >
-                <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-            <span className={`ml-2 ${isActive ? 'text-green-600 font-medium' : 'text-gray-600 font-medium'}`}>
-                Move to root
-            </span>
-        </div>
-    );
-};
-
 export const TrashDropArea = ({
                                   isActive,
                                   draggedItem,
@@ -77,11 +42,7 @@ export const TrashDropArea = ({
 
 const TreeActions = ({
                          draggedItem,
-                         isRootActive,
                          isTrashActive,
-                         handleRootDragOver,
-                         handleRootDragLeave,
-                         handleRootDrop,
                          handleTrashDragOver,
                          handleTrashDragLeave,
                          handleTrashDrop
@@ -94,23 +55,17 @@ const TreeActions = ({
                 </span>
             </div>
 
-            <div className="flex space-x-3">
-                <RootDropArea
-                    isActive={isRootActive}
-                    draggedItem={draggedItem}
-                    onDragOver={handleRootDragOver}
-                    onDragLeave={handleRootDragLeave}
-                    onDrop={handleRootDrop}
-                />
-
-                <TrashDropArea
-                    isActive={isTrashActive}
-                    draggedItem={draggedItem}
-                    onDragOver={handleTrashDragOver}
-                    onDragLeave={handleTrashDragLeave}
-                    onDrop={handleTrashDrop}
-                />
-            </div>
+            {draggedItem && (
+                <div className="flex space-x-3">
+                    <TrashDropArea
+                        isActive={isTrashActive}
+                        draggedItem={draggedItem}
+                        onDragOver={handleTrashDragOver}
+                        onDragLeave={handleTrashDragLeave}
+                        onDrop={handleTrashDrop}
+                    />
+                </div>
+            )}
         </div>
     );
 };
