@@ -1,0 +1,99 @@
+import React from 'react';
+import { ChevronDown, ChevronRight, Move, Tag, Plus } from 'lucide-react';
+
+const TreeNode = ({
+                      item,
+                      level = 0,
+                      draggedItem,
+                      dropTarget,
+                      toggleExpand,
+                      handleDragStart,
+                      handleDragOver,
+                      handleDrop,
+                      handleAddCategory
+                  }) => {
+    const isDropTarget = dropTarget?.id === item.id;
+    const isDragging = draggedItem?.id === item.id;
+
+    return (
+        <div key={item.id} className={isDragging ? 'opacity-50' : ''}>
+            <div
+                className={`flex items-center p-2 rounded-md mb-1 ${isDropTarget ? 'bg-blue-100 border-2 border-blue-500' : ''}`}
+                style={{
+                    marginLeft: `${level * 20}px`,
+                    borderLeft: `4px solid ${item.color}`,
+                    backgroundColor: isDropTarget ? 'rgba(52, 152, 219, 0.1)' : 'white'
+                }}
+                onDragOver={(e) => handleDragOver(e, item)}
+                onDrop={(e) => handleDrop(e, item)}
+            >
+                <div className="flex items-center flex-1 cursor-pointer" onClick={() => toggleExpand(item.id)}>
+                    {item.children && item.children.length > 0 ? (
+                        item.expanded ?
+                            <ChevronDown size={16} className="text-gray-700" /> :
+                            <ChevronRight size={16} className="text-gray-700" />
+                    ) : (
+                        <div className="w-4"></div>
+                    )}
+                    <div
+                        className="ml-2 font-medium px-2 py-1 rounded-md"
+                        style={{
+                            color: item.color,
+                            fontWeight: 700
+                        }}
+                    >
+                        {item.name}
+                    </div>
+                    {item.children && item.children.length > 0 && (
+                        <span className="ml-2 text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full">
+                            {item.children.length}
+                        </span>
+                    )}
+                </div>
+
+                <div className="flex items-center">
+                    <button className="p-1.5 mr-1.5 bg-gray-800 hover:bg-gray-700 rounded-md text-white transition-all shadow-sm">
+                        <Tag size={16} />
+                    </button>
+                    <button
+                        className="p-1.5 mr-1.5 bg-gray-800 hover:bg-gray-700 rounded-md text-white transition-all shadow-sm"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleAddCategory(item);
+                        }}
+                    >
+                        <Plus size={16} />
+                    </button>
+                    <button
+                        className="p-1.5 bg-gray-800 hover:bg-gray-700 rounded-md text-white transition-all shadow-sm cursor-grab active:cursor-grabbing"
+                        draggable="true"
+                        onDragStart={(e) => handleDragStart(e, item)}
+                    >
+                        <Move size={16} />
+                    </button>
+                </div>
+            </div>
+
+            {item.expanded && item.children && item.children.length > 0 && (
+                <div>
+                    {item.children.map(child => (
+                        <TreeNode
+                            key={child.id}
+                            item={child}
+                            level={level + 1}
+                            draggedItem={draggedItem}
+                            dropTarget={dropTarget}
+                            toggleExpand={toggleExpand}
+                            handleDragStart={handleDragStart}
+                            handleDragOver={handleDragOver}
+                            handleDrop={handleDrop}
+                            handleAddCategory={handleAddCategory}
+                        />
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default TreeNode;
