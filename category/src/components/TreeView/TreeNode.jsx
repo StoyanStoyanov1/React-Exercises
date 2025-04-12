@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronDown, ChevronRight, Move, Tag, Plus } from 'lucide-react';
+import { ChevronDown, ChevronRight, Move, Plus } from 'lucide-react';
 import { countAllDescendants } from './utils';
 
 const TreeNode = ({
@@ -14,7 +14,8 @@ const TreeNode = ({
                       handleAddCategory,
                       allItems,
                       isDraggedParentOfTarget,
-                      isDragging
+                      isDragging,
+                      isFiltered = false
                   }) => {
     const isDropTarget = dropTarget?.id === item.id;
     const isThisItemDragged = draggedItem?.id === item.id;
@@ -28,6 +29,11 @@ const TreeNode = ({
     const showDropTargetHighlight = isDropTarget && isValidDropTarget;
 
     const totalDescendants = countAllDescendants(item);
+
+    const handleToggleExpand = (e) => {
+        e.stopPropagation();
+        toggleExpand(item.id);
+    };
 
     return (
         <div key={item.id} className={isThisItemDragged && isDragging ? 'opacity-50' : ''}>
@@ -55,20 +61,23 @@ const TreeNode = ({
                     }
                 }}
             >
-                <div className="flex items-center flex-1 cursor-pointer" onClick={() => toggleExpand(item.id)}>
-                    {item.children && item.children.length > 0 ? (
-                        item.expanded ?
-                            <ChevronDown size={16} className="text-gray-700" /> :
-                            <ChevronRight size={16} className="text-gray-700" />
-                    ) : (
-                        <div className="w-4"></div>
-                    )}
+                <div className="flex items-center flex-1" onClick={handleToggleExpand}>
+                    <div className="flex-shrink-0 w-4 h-4 flex items-center justify-center cursor-pointer" onClick={handleToggleExpand}>
+                        {item.children && item.children.length > 0 ? (
+                            item.expanded ?
+                                <ChevronDown size={16} className="text-gray-700" /> :
+                                <ChevronRight size={16} className="text-gray-700" />
+                        ) : (
+                            <div className="w-4"></div>
+                        )}
+                    </div>
                     <div
-                        className="ml-2 font-medium px-2 py-1 rounded-md"
+                        className="ml-2 font-medium px-2 py-1 rounded-md cursor-pointer"
                         style={{
                             color: "#333333",
                             fontWeight: 700
                         }}
+                        onClick={handleToggleExpand}
                     >
                         {item.name}
                     </div>
@@ -80,7 +89,6 @@ const TreeNode = ({
                 </div>
 
                 <div className="flex items-center">
-
                     <button
                         className="p-1.5 mr-1.5 bg-gray-800 hover:bg-gray-700 rounded-md text-white transition-all shadow-sm"
                         onClick={(e) => {
@@ -94,6 +102,7 @@ const TreeNode = ({
                         className="p-1.5 bg-gray-800 hover:bg-gray-700 rounded-md text-white transition-all shadow-sm cursor-grab active:cursor-grabbing"
                         draggable="true"
                         onDragStart={(e) => handleDragStart(e, item)}
+                        onClick={(e) => e.stopPropagation()}
                     >
                         <Move size={16} />
                     </button>
@@ -117,6 +126,7 @@ const TreeNode = ({
                             allItems={allItems}
                             isDraggedParentOfTarget={isDraggedParentOfTarget}
                             isDragging={isDragging}
+                            isFiltered={isFiltered}
                         />
                     ))}
                 </div>

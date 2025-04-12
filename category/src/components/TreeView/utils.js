@@ -102,19 +102,20 @@ export const filterTreeBySearchTerm = (items, searchTerm) => {
         if (matchesSearch) {
             return [...filtered, {
                 ...item,
+                expanded: true
             }];
         }
 
-        let filteredChildren = [];
         if (item.children && item.children.length > 0) {
-            filteredChildren = filterTreeBySearchTerm(item.children, searchTerm);
-        }
+            const filteredChildren = filterTreeBySearchTerm(item.children, searchTerm);
 
-        if (filteredChildren.length > 0) {
-            return [...filtered, {
-                ...item,
-                children: filteredChildren
-            }];
+            if (filteredChildren.length > 0) {
+                return [...filtered, {
+                    ...item,
+                    expanded: true,
+                    children: filteredChildren
+                }];
+            }
         }
 
         return filtered;

@@ -2,14 +2,15 @@ import React from 'react';
 import { X, Check } from 'lucide-react';
 import { countAllDescendants } from './utils';
 
-const CategoryFilter = ({
+const SelectItem = ({
                             isOpen,
                             onClose,
                             categories,
                             selectedCategories,
                             onCategoryToggle,
                             onSelectAll,
-                            onDeselectAll
+                            onDeselectAll,
+                            onApplyFilter
                         }) => {
     if (!isOpen) return null;
 
@@ -18,7 +19,7 @@ const CategoryFilter = ({
             <div className="fixed inset-0 bg-black opacity-50" onClick={onClose}></div>
             <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md z-10 max-h-[80vh] overflow-y-auto">
                 <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-semibold text-gray-800">Filter Categories</h2>
+                    <h2 className="text-xl font-semibold text-gray-800">Select Categories</h2>
                     <button
                         onClick={onClose}
                         className="text-gray-500 hover:text-gray-700 transition-colors"
@@ -64,7 +65,7 @@ const CategoryFilter = ({
                                 </div>
 
                                 <div className="flex-1">
-                                    <span className="font-medium" style={{ color: '#333333' }}>{category.name}
+                                    <span className="font-medium" style={{ color: '#333333' }}>
                                         {category.name}
                                     </span>
                                     {totalDescendants > 0 && (
@@ -80,10 +81,10 @@ const CategoryFilter = ({
 
                 <div className="mt-6 flex justify-end">
                     <button
-                        onClick={onClose}
+                        onClick={onApplyFilter}
                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                     >
-                        Apply Filter
+                        Apply Selection
                     </button>
                 </div>
             </div>
@@ -91,4 +92,4 @@ const CategoryFilter = ({
     );
 };
 
-export default CategoryFilter;
+export default SelectItem;

@@ -6,7 +6,7 @@ import TreeSearch from './TreeSearch';
 import TreeActions from './TreeActions';
 import AddCategory from './AddCategory';
 import Modal from './Modal';
-import CategoryFilter from './CategoryFilter';
+import SelectItem from './SelectItem.jsx';
 import {
     updateExpandedState,
     cloneTreeWithoutItem,
@@ -24,10 +24,12 @@ const TreeView = ({ data, title = "Title" }) => {
 
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [selectedCategories, setSelectedCategories] = useState([]);
+    const [appliedCategoryFilter, setAppliedCategoryFilter] = useState([]);
 
     useEffect(() => {
         const rootCategoryIds = currentData.map(category => category.id);
         setSelectedCategories(rootCategoryIds);
+        setAppliedCategoryFilter(rootCategoryIds);
     }, [currentData]);
 
     const [draggedItem, setDraggedItem] = useState(null);
@@ -47,17 +49,19 @@ const TreeView = ({ data, title = "Title" }) => {
     const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
     const [addingToParent, setAddingToParent] = useState(null);
 
+    const filterCategoriesById = (items, allowedIds) => {
+        return items.filter(item => allowedIds.includes(item.id));
+    };
+
     const filteredData = useMemo(() => {
-        const categoryFiltered = currentData.filter(category =>
-            selectedCategories.includes(category.id)
-        );
+        const categoryFiltered = filterCategoriesById(currentData, appliedCategoryFilter);
 
         if (searchTerm.trim() === '') {
             return categoryFiltered;
         }
 
         return filterTreeBySearchTerm(categoryFiltered, searchTerm);
-    }, [currentData, selectedCategories, searchTerm]);
+    }, [currentData, appliedCategoryFilter, searchTerm]);
 
     const showModal = (title, message, onConfirm) => {
         const confirmHandler = () => {
@@ -94,13 +98,22 @@ const TreeView = ({ data, title = "Title" }) => {
         setSelectedCategories([]);
     };
 
+    const handleApplyFilter = () => {
+        setAppliedCategoryFilter(selectedCategories);
+        setIsFilterOpen(false);
+    };
+
     const toggleExpand = (id) => {
-        setCurrentData(updateExpandedState(currentData, id));
+        const updatedFullData = updateExpandedState(currentData, id);
+        setCurrentData(updatedFullData);
     };
 
     const deleteItem = (id) => {
         const newData = cloneTreeWithoutItem(currentData, id);
         setCurrentData(newData);
+
+        setSelectedCategories(prev => prev.filter(catId => catId !== id));
+        setAppliedCategoryFilter(prev => prev.filter(catId => catId !== id));
     };
 
     const addCategory = (parentId, categoryName) => {
@@ -153,6 +166,7 @@ const TreeView = ({ data, title = "Title" }) => {
             setCurrentData([...currentData, newCategory]);
 
             setSelectedCategories(prev => [...prev, newCategoryId]);
+            setAppliedCategoryFilter(prev => [...prev, newCategoryId]);
         }
     };
 
@@ -179,7 +193,6 @@ const TreeView = ({ data, title = "Title" }) => {
         return isChild(draggedItem.children, targetId);
     };
 
-    // Функции за drag & drop
     const handleDragStart = (e, item) => {
         e.stopPropagation();
         setDraggedItem(item);
@@ -285,6 +298,10 @@ const TreeView = ({ data, title = "Title" }) => {
                         setSelectedCategories(prev => [...prev, draggedItem.id]);
                     }
 
+                    if (!appliedCategoryFilter.includes(draggedItem.id)) {
+                        setAppliedCategoryFilter(prev => [...prev, draggedItem.id]);
+                    }
+
                     setCurrentData([...dataWithoutDragged, newRootItem]);
                 }
             }
@@ -316,8 +333,6 @@ const TreeView = ({ data, title = "Title" }) => {
             `Are you sure you want to delete "${draggedItem.name}"?`,
             () => {
                 deleteItem(draggedItem.id);
-
-                setSelectedCategories(prev => prev.filter(id => id !== draggedItem.id));
             }
         );
 
@@ -326,7 +341,6 @@ const TreeView = ({ data, title = "Title" }) => {
         setIsDragging(false);
     };
 
-    // Функции за модалните прозорци
     const handleAddCategory = (parentItem) => {
         setAddingToParent(parentItem);
         setAddCategoryModalOpen(true);
@@ -341,6 +355,8 @@ const TreeView = ({ data, title = "Title" }) => {
         addCategory(parentId, categoryName);
         setAddCategoryModalOpen(false);
     };
+
+    const isFilterActive = appliedCategoryFilter.length < currentData.length;
 
     return (
         <div className="w max-w-3xl bg-white rounded-lg shadow-md p-4">
@@ -359,14 +375,18 @@ const TreeView = ({ data, title = "Title" }) => {
                 onCancel={() => setAddCategoryModalOpen(false)}
             />
 
-            <CategoryFilter
+            <SelectItem
                 isOpen={isFilterOpen}
-                onClose={() => setIsFilterOpen(false)}
+                onClose={() => {
+                    setSelectedCategories(appliedCategoryFilter);
+                    setIsFilterOpen(false);
+                }}
                 categories={currentData}
                 selectedCategories={selectedCategories}
                 onCategoryToggle={handleToggleCategory}
                 onSelectAll={handleSelectAllCategories}
                 onDeselectAll={handleDeselectAllCategories}
+                onApplyFilter={handleApplyFilter}
             />
 
             <div className="flex justify-between items-center mb-4">
@@ -375,14 +395,17 @@ const TreeView = ({ data, title = "Title" }) => {
                     <button
                         className="p-2 mr-2 bg-gray-100 rounded-md hover:bg-gray-200 text-gray-700"
                         onClick={handleAddRootCategory}
+                        title="Add new root category"
                     >
                         <Plus size={18} />
                     </button>
                     <button
-                        className={`p-2 rounded-md hover:bg-gray-200 text-gray-700 transition-colors ${selectedCategories.length < currentData.length ? 'bg-blue-100' : 'bg-gray-100'}`}
+                        className={`flex items-center px-3 py-2 rounded-md hover:bg-blue-600 text-white transition-colors ${isFilterActive ? 'bg-blue-600' : 'bg-blue-500'}`}
                         onClick={() => setIsFilterOpen(true)}
+                        title="Select which categories to display"
                     >
-                        <Filter size={18} />
+                        <Filter size={18} className="mr-2" />
+                        <span className="text-sm font-medium">Select Categories</span>
                     </button>
                 </div>
             </div>
@@ -414,6 +437,7 @@ const TreeView = ({ data, title = "Title" }) => {
                                 allItems={currentData}
                                 isDraggedParentOfTarget={isDraggedParentOfTarget}
                                 isDragging={isDragging}
+                                isFiltered={true}
                             />
                         ))}
 
@@ -433,10 +457,24 @@ const TreeView = ({ data, title = "Title" }) => {
                 ) : (
                     <div className="py-8 text-center text-gray-400">
                         <p>No categories to display</p>
-                        <p className="text-sm mt-1">Try changing your filter settings</p>
+                        <p className="text-sm mt-1">Try changing your category selection or search filters</p>
                     </div>
                 )}
             </div>
+
+            {isFilterActive && (
+                <div className="mt-4 flex justify-between items-center py-2 px-3 bg-blue-50 rounded-md border border-blue-200">
+                    <p className="text-sm text-blue-700">
+                        <span className="font-medium">Filter active:</span> Showing {appliedCategoryFilter.length} of {currentData.length} categories
+                    </p>
+                    <button
+                        className="text-xs px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-md"
+                        onClick={() => setIsFilterOpen(true)}
+                    >
+                        Edit Selection
+                    </button>
+                </div>
+            )}
 
             <div className="mt-4 text-sm text-gray-600">
                 <p>* When dragging: use the trash icon to delete items, drop on other items to move them, or use the bottom drop area to make them top-level items</p>
