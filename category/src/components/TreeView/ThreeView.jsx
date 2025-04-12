@@ -128,6 +128,32 @@ const TreeView = ({ data, title = "Title" }) => {
         }
     };
 
+    // Проверява дали влаченият елемент е родител на целевия елемент
+    const isDraggedParentOfTarget = (draggedId, targetId) => {
+        // Намираме драгнатия елемент
+        const draggedItem = findItem(currentData, draggedId);
+        if (!draggedItem || !draggedItem.children || draggedItem.children.length === 0) {
+            return false;
+        }
+
+        // Рекурсивно проверяваме дали targetId е в децата на draggedItem
+        const isChild = (children, id) => {
+            for (const child of children) {
+                if (child.id === id) {
+                    return true;
+                }
+                if (child.children && child.children.length > 0) {
+                    if (isChild(child.children, id)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+
+        return isChild(draggedItem.children, targetId);
+    };
+
     // Функции за drag & drop
     const handleDragStart = (e, item) => {
         e.stopPropagation();
@@ -136,30 +162,24 @@ const TreeView = ({ data, title = "Title" }) => {
 
     const handleDragOver = (e, item) => {
         e.preventDefault();
-        if (draggedItem && item.id !== draggedItem.id) {
-            // Проверка дали целта не е наследник на влачения елемент
-            if (isDescendantOf(item, draggedItem.id)) {
-                return;
-            }
-            setDropTarget(item);
+
+        // Не позволяваме влачене върху себе си или към свое дете
+        if (!draggedItem ||
+            item.id === draggedItem.id ||
+            isDraggedParentOfTarget(draggedItem.id, item.id)) {
+            return;
         }
+
+        setDropTarget(item);
     };
 
     const handleDrop = (e, target) => {
         e.preventDefault();
-        if (!draggedItem || target.id === draggedItem.id) {
-            setDropTarget(null);
-            setDraggedItem(null);
-            return;
-        }
 
-        // Проверка дали целта не е наследник на влачения елемент
-        if (isDescendantOf(target, draggedItem.id)) {
-            showModal(
-                "Invalid Operation",
-                "Cannot move a parent category into one of its children",
-                () => {}
-            );
+        // Не позволяваме дроп върху себе си или върху свое дете
+        if (!draggedItem ||
+            target.id === draggedItem.id ||
+            isDraggedParentOfTarget(draggedItem.id, target.id)) {
             setDropTarget(null);
             setDraggedItem(null);
             return;
@@ -342,6 +362,8 @@ const TreeView = ({ data, title = "Title" }) => {
                         handleDragOver={handleDragOver}
                         handleDrop={handleDrop}
                         handleAddCategory={handleAddCategory}
+                        allItems={currentData}
+                        isDraggedParentOfTarget={isDraggedParentOfTarget}
                     />
                 ))}
 

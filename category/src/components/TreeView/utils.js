@@ -32,16 +32,30 @@ export const findItem = (items, id) => {
     return null;
 };
 
-// Check if an item is a descendant of another item with the given ID
+/**
+ * Checks if an item is a descendant of another item with the given ID
+ * This prevents creating circular references in the category tree
+ *
+ * @param {Object} item - The potential child item
+ * @param {number|string} potentialParentId - ID of the potential parent
+ * @returns {boolean} - True if the item is a descendant of the specified parent ID
+ */
 export const isDescendantOf = (item, potentialParentId) => {
+    // If item is null/undefined or has no children, it can't contain the parent
     if (!item || !item.children) return false;
 
+    // Check each child
     for (const child of item.children) {
+        // Direct match - this child is the potential parent
         if (child.id === potentialParentId) {
             return true;
         }
-        if (isDescendantOf(child, potentialParentId)) {
-            return true;
+
+        // Recursive check - check if any descendant is the potential parent
+        if (child.children && child.children.length > 0) {
+            if (isDescendantOf(child, potentialParentId)) {
+                return true;
+            }
         }
     }
 

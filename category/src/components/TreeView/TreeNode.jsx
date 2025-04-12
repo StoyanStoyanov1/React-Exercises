@@ -10,22 +10,53 @@ const TreeNode = ({
                       handleDragStart,
                       handleDragOver,
                       handleDrop,
-                      handleAddCategory
+                      handleAddCategory,
+                      allItems,
+                      isDraggedParentOfTarget
                   }) => {
     const isDropTarget = dropTarget?.id === item.id;
     const isDragging = draggedItem?.id === item.id;
 
+    // Проверяваме дали текущият елемент е валидна drop цел
+    // Невалиден е когато:
+    // 1. Влачим елемент върху себе си
+    // 2. Влачим родител върху свое дете
+    const isValidDropTarget = !(
+        !draggedItem ||
+        draggedItem.id === item.id ||
+        (draggedItem && isDraggedParentOfTarget(draggedItem.id, item.id))
+    );
+
+    // Показваме подсветка само ако е валидна цел
+    const showDropTargetHighlight = isDropTarget && isValidDropTarget;
+
     return (
         <div key={item.id} className={isDragging ? 'opacity-50' : ''}>
             <div
-                className={`flex items-center p-2 rounded-md mb-1 ${isDropTarget ? 'bg-blue-100 border-2 border-blue-500' : ''}`}
+                className={`flex items-center p-2 rounded-md mb-1 
+                    ${showDropTargetHighlight ? 'bg-blue-100 border-2 border-blue-500' : ''}
+                    ${draggedItem && !isValidDropTarget ? 'cursor-not-allowed' : ''}`}
                 style={{
                     marginLeft: `${level * 20}px`,
                     borderLeft: `4px solid ${item.color}`,
-                    backgroundColor: isDropTarget ? 'rgba(52, 152, 219, 0.1)' : 'white'
+                    backgroundColor: showDropTargetHighlight ? 'rgba(52, 152, 219, 0.1)' : 'white'
                 }}
-                onDragOver={(e) => handleDragOver(e, item)}
-                onDrop={(e) => handleDrop(e, item)}
+                onDragOver={(e) => {
+                    // Прихващаме събитието за всички елементи, но обработваме само за валидни цели
+                    e.preventDefault(); // Винаги предотвратяваме default за правилна drag-and-drop функционалност
+
+                    if (isValidDropTarget) {
+                        handleDragOver(e, item);
+                    }
+                }}
+                onDrop={(e) => {
+                    // Прихващаме събитието за всички елементи, но обработваме само за валидни цели
+                    e.preventDefault(); // Винаги предотвратяваме default
+
+                    if (isValidDropTarget) {
+                        handleDrop(e, item);
+                    }
+                }}
             >
                 <div className="flex items-center flex-1 cursor-pointer" onClick={() => toggleExpand(item.id)}>
                     {item.children && item.children.length > 0 ? (
@@ -88,6 +119,8 @@ const TreeNode = ({
                             handleDragOver={handleDragOver}
                             handleDrop={handleDrop}
                             handleAddCategory={handleAddCategory}
+                            allItems={allItems}
+                            isDraggedParentOfTarget={isDraggedParentOfTarget}
                         />
                     ))}
                 </div>
