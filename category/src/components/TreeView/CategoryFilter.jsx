@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { X, Check } from 'lucide-react';
+import { countAllDescendants } from './utils';
 
 const CategoryFilter = ({
                             isOpen,
@@ -42,36 +43,39 @@ const CategoryFilter = ({
                 </div>
 
                 <div className="space-y-2">
-                    {categories.map(category => (
-                        <div
-                            key={category.id}
-                            className={`flex items-center p-2 rounded-md cursor-pointer hover:bg-gray-100 transition-colors
-                                ${selectedCategories.includes(category.id) ? 'border-l-4' : 'border-l-4 border-transparent'}`}
-                            style={{
-                                borderLeftColor: selectedCategories.includes(category.id) ? category.color : 'transparent'
-                            }}
-                            onClick={() => onCategoryToggle(category.id)}
-                        >
-                            <div className={`w-5 h-5 rounded flex items-center justify-center mr-3 
-                                ${selectedCategories.includes(category.id)
-                                ? 'bg-blue-600 text-white'
-                                : 'border border-gray-300'}`}
+                    {categories.map(category => {
+                        const totalDescendants = countAllDescendants(category);
+                        return (
+                            <div
+                                key={category.id}
+                                className={`flex items-center p-2 rounded-md cursor-pointer hover:bg-gray-100 transition-colors
+                                    ${selectedCategories.includes(category.id) ? 'border-l-4' : 'border-l-4 border-transparent'}`}
+                                style={{
+                                    borderLeftColor: selectedCategories.includes(category.id) ? category.color : 'transparent'
+                                }}
+                                onClick={() => onCategoryToggle(category.id)}
                             >
-                                {selectedCategories.includes(category.id) && <Check size={14} />}
-                            </div>
+                                <div className={`w-5 h-5 rounded flex items-center justify-center mr-3 
+                                    ${selectedCategories.includes(category.id)
+                                    ? 'bg-blue-600 text-white'
+                                    : 'border border-gray-300'}`}
+                                >
+                                    {selectedCategories.includes(category.id) && <Check size={14} />}
+                                </div>
 
-                            <div className="flex-1">
-                                <span className="font-medium" style={{ color: category.color }}>
-                                    {category.name}
-                                </span>
-                                {category.children && (
-                                    <span className="ml-2 text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full">
-                                        {category.children.length}
+                                <div className="flex-1">
+                                    <span className="font-medium" style={{ color: '#333333' }}>{category.name}
+                                        {category.name}
                                     </span>
-                                )}
+                                    {totalDescendants > 0 && (
+                                        <span className="ml-2 text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full">
+                                            {totalDescendants}
+                                        </span>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 <div className="mt-6 flex justify-end">

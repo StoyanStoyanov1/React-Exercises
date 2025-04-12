@@ -14,36 +14,28 @@ import {
     updateItemColors,
     findItem,
     getColorFromPalette,
-    isDescendantOf
 } from './utils';
 
 const TreeView = ({ data, title = "Title" }) => {
-    // Основни данни
     const [currentData, setCurrentData] = useState(applyColorsToTree(data));
     const [nextId, setNextId] = useState(1000);
 
-    // Състояние за търсене
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Състояние за филтриране
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [selectedCategories, setSelectedCategories] = useState([]);
 
-    // Инициализиране на филтъра с всички root категории
     useEffect(() => {
-        // Вземаме всички ID-та на главните категории
         const rootCategoryIds = currentData.map(category => category.id);
         setSelectedCategories(rootCategoryIds);
     }, [currentData]);
 
-    // Състояние за drag & drop
     const [draggedItem, setDraggedItem] = useState(null);
     const [dropTarget, setDropTarget] = useState(null);
     const [isRootDropAreaActive, setIsRootDropAreaActive] = useState(false);
     const [isTrashHover, setIsTrashHover] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
 
-    // Състояние за модални прозорци
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalConfig, setModalConfig] = useState({
         title: '',
@@ -52,22 +44,17 @@ const TreeView = ({ data, title = "Title" }) => {
         onCancel: () => {}
     });
 
-    // Състояние за добавяне на категория
     const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
     const [addingToParent, setAddingToParent] = useState(null);
 
-    // Филтрирани данни според търсенето и избраните категории
     const filteredData = useMemo(() => {
-        // Първо филтрираме според избраните категории
         const categoryFiltered = currentData.filter(category =>
             selectedCategories.includes(category.id)
         );
 
-        // След това прилагаме търсенето върху филтрираните категории
         return filterTreeBySearchTerm(categoryFiltered, searchTerm);
     }, [currentData, selectedCategories, searchTerm]);
 
-    // Добавяме глобален drag end event listener
     useEffect(() => {
         const handleDragEnd = () => {
             setIsDragging(false);
@@ -83,7 +70,6 @@ const TreeView = ({ data, title = "Title" }) => {
         };
     }, []);
 
-    // Функция за показване на модален прозорец
     const showModal = (title, message, onConfirm) => {
         const confirmHandler = () => {
             onConfirm();
@@ -100,7 +86,6 @@ const TreeView = ({ data, title = "Title" }) => {
         setIsModalOpen(true);
     };
 
-    // Функции за управление на филтъра
     const handleToggleCategory = (categoryId) => {
         setSelectedCategories(prev => {
             if (prev.includes(categoryId)) {
@@ -120,7 +105,6 @@ const TreeView = ({ data, title = "Title" }) => {
         setSelectedCategories([]);
     };
 
-    // Функции за управление на дървото
     const toggleExpand = (id) => {
         setCurrentData(updateExpandedState(currentData, id));
     };
@@ -139,7 +123,6 @@ const TreeView = ({ data, title = "Title" }) => {
         if (parentId && !parent) return;
 
         if (parentId) {
-            // Добавяне на дете към съществуваща категория
             const updateParentChildren = (items) => {
                 return items.map(item => {
                     if (item.id === parentId) {
@@ -168,7 +151,6 @@ const TreeView = ({ data, title = "Title" }) => {
 
             setCurrentData(updateParentChildren(currentData));
         } else {
-            // Добавяне на категория на най-горно ниво
             const color = getColorFromPalette(currentData.length);
 
             const newCategory = {
@@ -181,20 +163,16 @@ const TreeView = ({ data, title = "Title" }) => {
 
             setCurrentData([...currentData, newCategory]);
 
-            // Автоматично добавяме новата категория към филтъра
             setSelectedCategories(prev => [...prev, newCategoryId]);
         }
     };
 
-    // Проверява дали влаченият елемент е родител на целевия елемент
     const isDraggedParentOfTarget = (draggedId, targetId) => {
-        // Намираме драгнатия елемент
         const draggedItem = findItem(currentData, draggedId);
         if (!draggedItem || !draggedItem.children || draggedItem.children.length === 0) {
             return false;
         }
 
-        // Рекурсивно проверяваме дали targetId е в децата на draggedItem
         const isChild = (children, id) => {
             for (const child of children) {
                 if (child.id === id) {
@@ -222,7 +200,6 @@ const TreeView = ({ data, title = "Title" }) => {
     const handleDragOver = (e, item) => {
         e.preventDefault();
 
-        // Не позволяваме влачене върху себе си или към свое дете
         if (!draggedItem ||
             item.id === draggedItem.id ||
             isDraggedParentOfTarget(draggedItem.id, item.id)) {
@@ -235,7 +212,6 @@ const TreeView = ({ data, title = "Title" }) => {
     const handleDrop = (e, target) => {
         e.preventDefault();
 
-        // Не позволяваме дроп върху себе си или върху свое дете
         if (!draggedItem ||
             target.id === draggedItem.id ||
             isDraggedParentOfTarget(draggedItem.id, target.id)) {
@@ -316,7 +292,6 @@ const TreeView = ({ data, title = "Title" }) => {
 
                     updateItemColors(newRootItem, color);
 
-                    // Нов root елемент - добавяме го в списъка от избрани категории
                     if (!selectedCategories.includes(draggedItem.id)) {
                         setSelectedCategories(prev => [...prev, draggedItem.id]);
                     }
@@ -353,7 +328,6 @@ const TreeView = ({ data, title = "Title" }) => {
             () => {
                 deleteItem(draggedItem.id);
 
-                // Ако изтритата категория е root, премахваме я и от филтъра
                 setSelectedCategories(prev => prev.filter(id => id !== draggedItem.id));
             }
         );
@@ -454,7 +428,6 @@ const TreeView = ({ data, title = "Title" }) => {
                             />
                         ))}
 
-                        {/* Root drop area at the bottom - only visible when dragging */}
                         {isDragging && (
                             <div
                                 className={`mt-2 p-2 border-2 rounded-md transition-all ${isRootDropAreaActive ? 'border-green-500 bg-green-50' : 'border-dashed border-gray-300'} cursor-pointer`}

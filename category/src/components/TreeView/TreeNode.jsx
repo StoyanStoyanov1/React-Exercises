@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChevronDown, ChevronRight, Move, Tag, Plus } from 'lucide-react';
+import { countAllDescendants } from './utils';
 
 const TreeNode = ({
                       item,
@@ -18,18 +19,15 @@ const TreeNode = ({
     const isDropTarget = dropTarget?.id === item.id;
     const isThisItemDragged = draggedItem?.id === item.id;
 
-    // Проверяваме дали текущият елемент е валидна drop цел
-    // Невалиден е когато:
-    // 1. Влачим елемент върху себе си
-    // 2. Влачим родител върху свое дете
     const isValidDropTarget = !(
         !draggedItem ||
         draggedItem.id === item.id ||
         (draggedItem && isDraggedParentOfTarget(draggedItem.id, item.id))
     );
 
-    // Показваме подсветка само ако е валидна цел
     const showDropTargetHighlight = isDropTarget && isValidDropTarget;
+
+    const totalDescendants = countAllDescendants(item);
 
     return (
         <div key={item.id} className={isThisItemDragged && isDragging ? 'opacity-50' : ''}>
@@ -43,16 +41,14 @@ const TreeNode = ({
                     backgroundColor: showDropTargetHighlight ? 'rgba(52, 152, 219, 0.1)' : 'white'
                 }}
                 onDragOver={(e) => {
-                    // Прихващаме събитието за всички елементи, но обработваме само за валидни цели
-                    e.preventDefault(); // Винаги предотвратяваме default за правилна drag-and-drop функционалност
+                    e.preventDefault();
 
                     if (isValidDropTarget) {
                         handleDragOver(e, item);
                     }
                 }}
                 onDrop={(e) => {
-                    // Прихващаме събитието за всички елементи, но обработваме само за валидни цели
-                    e.preventDefault(); // Винаги предотвратяваме default
+                    e.preventDefault();
 
                     if (isValidDropTarget) {
                         handleDrop(e, item);
@@ -70,23 +66,21 @@ const TreeNode = ({
                     <div
                         className="ml-2 font-medium px-2 py-1 rounded-md"
                         style={{
-                            color: item.color,
+                            color: "#333333",
                             fontWeight: 700
                         }}
                     >
                         {item.name}
                     </div>
-                    {item.children && item.children.length > 0 && (
+                    {totalDescendants > 0 && (
                         <span className="ml-2 text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full">
-                            {item.children.length}
+                            {totalDescendants}
                         </span>
                     )}
                 </div>
 
                 <div className="flex items-center">
-                    <button className="p-1.5 mr-1.5 bg-gray-800 hover:bg-gray-700 rounded-md text-white transition-all shadow-sm">
-                        <Tag size={16} />
-                    </button>
+
                     <button
                         className="p-1.5 mr-1.5 bg-gray-800 hover:bg-gray-700 rounded-md text-white transition-all shadow-sm"
                         onClick={(e) => {
