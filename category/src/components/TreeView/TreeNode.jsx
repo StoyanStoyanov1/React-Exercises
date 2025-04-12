@@ -12,10 +12,11 @@ const TreeNode = ({
                       handleDrop,
                       handleAddCategory,
                       allItems,
-                      isDraggedParentOfTarget
+                      isDraggedParentOfTarget,
+                      isDragging
                   }) => {
     const isDropTarget = dropTarget?.id === item.id;
-    const isDragging = draggedItem?.id === item.id;
+    const isThisItemDragged = draggedItem?.id === item.id;
 
     // Проверяваме дали текущият елемент е валидна drop цел
     // Невалиден е когато:
@@ -31,7 +32,7 @@ const TreeNode = ({
     const showDropTargetHighlight = isDropTarget && isValidDropTarget;
 
     return (
-        <div key={item.id} className={isDragging ? 'opacity-50' : ''}>
+        <div key={item.id} className={isThisItemDragged && isDragging ? 'opacity-50' : ''}>
             <div
                 className={`flex items-center p-2 rounded-md mb-1 
                     ${showDropTargetHighlight ? 'bg-blue-100 border-2 border-blue-500' : ''}
@@ -121,6 +122,7 @@ const TreeNode = ({
                             handleAddCategory={handleAddCategory}
                             allItems={allItems}
                             isDraggedParentOfTarget={isDraggedParentOfTarget}
+                            isDragging={isDragging}
                         />
                     ))}
                 </div>
