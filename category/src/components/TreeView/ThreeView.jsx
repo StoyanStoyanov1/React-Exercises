@@ -119,6 +119,24 @@ const TreeView = ({ data, title = "Title" }) => {
         setAppliedCategoryFilter(prev => prev.filter(catId => catId !== id));
     };
 
+    const updateCategoryName = (id, newName) => {
+        const updateName = (items) => {
+            return items.map(item => {
+                if (item.id === id) {
+                    return { ...item, name: newName };
+                } else if (item.children && item.children.length > 0) {
+                    return {
+                        ...item,
+                        children: updateName(item.children)
+                    };
+                }
+                return item;
+            });
+        };
+
+        setCurrentData(updateName(currentData));
+    };
+
     const addCategory = (parentId, categoryName) => {
         const newCategoryId = nextId;
         setNextId(nextId + 1);
@@ -442,6 +460,7 @@ const TreeView = ({ data, title = "Title" }) => {
                                 isDraggedParentOfTarget={isDraggedParentOfTarget}
                                 isDragging={isDragging}
                                 isFiltered={true}
+                                updateCategoryName={updateCategoryName}
                             />
                         ))}
 
@@ -482,6 +501,7 @@ const TreeView = ({ data, title = "Title" }) => {
 
             <div className="mt-4 text-sm text-gray-600">
                 <p>* When dragging: use the trash icon to delete items, drop on other items to move them, or use the bottom drop area to make them top-level items</p>
+                <p>* Double-click on a category name to edit it</p>
             </div>
         </div>
     );
