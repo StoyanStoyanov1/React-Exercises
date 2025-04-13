@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
 
 export const CategoryForm = ({
@@ -54,6 +54,28 @@ const AddCategory = ({
     const [categoryName, setCategoryName] = useState('');
     const [showConfirmation, setShowConfirmation] = useState(false);
 
+    useEffect(() => {
+        if (!isOpen) {
+            setCategoryName('');
+        }
+    }, [isOpen]);
+
+    useEffect(() => {
+        const handleEscapeKey = (e) => {
+            if (e.key === 'Escape' && isOpen && !showConfirmation) {
+                onCancel();
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener('keydown', handleEscapeKey);
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleEscapeKey);
+        };
+    }, [isOpen, onCancel, showConfirmation]);
+
     if (!isOpen) return null;
 
     const handleConfirm = () => {
@@ -98,7 +120,6 @@ const AddCategory = ({
                     onEnterPress={handleEnterPress}
                 />
 
-                {/* Confirmation Modal */}
                 <Modal
                     isOpen={showConfirmation}
                     title="Confirm Category Creation"

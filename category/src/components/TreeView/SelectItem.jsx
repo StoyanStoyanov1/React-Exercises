@@ -12,25 +12,35 @@ const SelectItem = ({
                         onDeselectAll,
                         onApplyFilter
                     }) => {
-    // Add event listener for ESC key
+    // Добавяме обработка на клавишите Escape и Enter
     useEffect(() => {
-        const handleEscapeKey = (e) => {
-            if (e.key === 'Escape' && isOpen) {
-                onClose();
+        const handleKeyDown = (e) => {
+            if (isOpen) {
+                if (e.key === 'Escape') {
+                    onClose();
+                } else if (e.key === 'Enter') {
+                    const activeElement = document.activeElement;
+                    const isInputField = activeElement.tagName === 'INPUT' ||
+                        activeElement.tagName === 'TEXTAREA';
+
+                    if (!isInputField) {
+                        onApplyFilter();
+                    }
+                }
             }
         };
 
         if (isOpen) {
-            document.addEventListener('keydown', handleEscapeKey);
+            document.addEventListener('keydown', handleKeyDown);
             // Prevent scrolling of the body when modal is open
             document.body.style.overflow = 'hidden';
         }
 
         return () => {
-            document.removeEventListener('keydown', handleEscapeKey);
+            document.removeEventListener('keydown', handleKeyDown);
             document.body.style.overflow = 'auto';
         };
-    }, [isOpen, onClose]);
+    }, [isOpen, onClose, onApplyFilter]);
 
     if (!isOpen) return null;
 

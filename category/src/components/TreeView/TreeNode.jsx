@@ -25,6 +25,7 @@ const TreeNode = ({
     const [editedName, setEditedName] = useState(item.name);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const dragButtonRef = useRef(null);
+    const inputRef = useRef(null);
 
     useEffect(() => {
         const handleDragEnd = () => {
@@ -39,6 +40,16 @@ const TreeNode = ({
             window.removeEventListener('dragend', handleDragEnd);
         };
     }, []);
+
+    // Нова логика за автоматичен фокус върху полето за въвеждане
+    useEffect(() => {
+        if (isEditing && inputRef.current) {
+            inputRef.current.focus();
+            // Позициониране на курсора в края на текста
+            const length = inputRef.current.value.length;
+            inputRef.current.setSelectionRange(length, length);
+        }
+    }, [isEditing]);
 
     const isValidDropTarget = !(
         !draggedItem ||
@@ -72,7 +83,12 @@ const TreeNode = ({
             e.preventDefault();
             if (editedName.trim() !== '' && editedName !== item.name) {
                 setShowConfirmation(true);
+            } else if (editedName.trim() === '') {
+                // Ако потребителят е изтрил всичко, връщаме оригиналното име
+                setEditedName(item.name);
+                setIsEditing(false);
             } else {
+                // Ако потребителят не е променил името
                 setIsEditing(false);
             }
         } else if (e.key === 'Escape') {
@@ -85,7 +101,12 @@ const TreeNode = ({
     const handleSaveEdit = () => {
         if (editedName.trim() !== '' && editedName !== item.name) {
             setShowConfirmation(true);
+        } else if (editedName.trim() === '') {
+            // Ако потребителят е изтрил всичко, връщаме оригиналното име
+            setEditedName(item.name);
+            setIsEditing(false);
         } else {
+            // Ако потребителят не е променил името
             setIsEditing(false);
         }
     };
@@ -157,12 +178,12 @@ const TreeNode = ({
                     {isEditing ? (
                         <div className="ml-2 flex items-center">
                             <input
+                                ref={inputRef}
                                 type="text"
                                 value={editedName}
                                 onChange={handleInputChange}
                                 onKeyDown={handleKeyDown}
                                 className="px-2 py-1 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                autoFocus
                                 onClick={(e) => e.stopPropagation()}
                             />
                             <button
@@ -215,7 +236,6 @@ const TreeNode = ({
                             draggable="true"
                             onDragStart={(e) => handleDragStart(e, item)}
                             onDragEnd={(e) => {
-                                // Explicitly remove focus when drag ends
                                 if (dragButtonRef.current) {
                                     dragButtonRef.current.blur();
                                 }

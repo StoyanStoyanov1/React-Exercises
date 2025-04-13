@@ -2,22 +2,32 @@ import React, { useEffect } from 'react';
 
 const Modal = ({ isOpen, title, message, onConfirm, onCancel, children }) => {
     useEffect(() => {
-        const handleEscKey = (e) => {
-            if (e.key === 'Escape' && isOpen) {
-                onCancel();
+        const handleKeyDown = (e) => {
+            if (isOpen) {
+                if (e.key === 'Escape') {
+                    onCancel();
+                } else if (e.key === 'Enter') {
+                    const activeElement = document.activeElement;
+                    const isInputOrTextarea = activeElement.tagName === 'INPUT' ||
+                        activeElement.tagName === 'TEXTAREA';
+
+                    if (!isInputOrTextarea) {
+                        onConfirm();
+                    }
+                }
             }
         };
 
         if (isOpen) {
-            document.addEventListener('keydown', handleEscKey);
+            document.addEventListener('keydown', handleKeyDown);
             document.body.style.overflow = 'hidden';
         }
 
         return () => {
-            document.removeEventListener('keydown', handleEscKey);
+            document.removeEventListener('keydown', handleKeyDown);
             document.body.style.overflow = 'auto';
         };
-    }, [isOpen, onCancel]);
+    }, [isOpen, onCancel, onConfirm]);
 
     if (!isOpen) return null;
 
