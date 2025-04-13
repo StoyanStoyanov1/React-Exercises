@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Modal from './Modal';
 
 export const CategoryForm = ({
                                  categoryName,
@@ -51,13 +52,13 @@ const AddCategory = ({
                          onCancel
                      }) => {
     const [categoryName, setCategoryName] = useState('');
+    const [showConfirmation, setShowConfirmation] = useState(false);
 
     if (!isOpen) return null;
 
     const handleConfirm = () => {
         if (categoryName.trim()) {
-            onAdd(parentItem ? parentItem.id : null, categoryName);
-            setCategoryName('');
+            setShowConfirmation(true);
         }
     };
 
@@ -66,6 +67,20 @@ const AddCategory = ({
             handleConfirm();
         }
     };
+
+    const handleConfirmAdd = () => {
+        onAdd(parentItem ? parentItem.id : null, categoryName);
+        setCategoryName('');
+        setShowConfirmation(false);
+    };
+
+    const handleCancelConfirmation = () => {
+        setShowConfirmation(false);
+    };
+
+    const confirmationMessage = parentItem
+        ? `Do you want to create "${categoryName}" in the "${parentItem.name}" category?`
+        : `Do you want to create "${categoryName}" in the root directory?`;
 
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -81,6 +96,15 @@ const AddCategory = ({
                     onConfirm={handleConfirm}
                     onCancel={onCancel}
                     onEnterPress={handleEnterPress}
+                />
+
+                {/* Confirmation Modal */}
+                <Modal
+                    isOpen={showConfirmation}
+                    title="Confirm Category Creation"
+                    message={confirmationMessage}
+                    onConfirm={handleConfirmAdd}
+                    onCancel={handleCancelConfirmation}
                 />
             </div>
         </div>

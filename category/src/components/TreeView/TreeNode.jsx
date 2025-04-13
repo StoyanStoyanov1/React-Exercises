@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, ChevronRight, Move, Plus, Check, X } from 'lucide-react';
 import { countAllDescendants } from './utils';
+import Modal from './Modal';
 
 const TreeNode = ({
                       item,
@@ -22,9 +23,9 @@ const TreeNode = ({
     const isThisItemDragged = draggedItem?.id === item.id;
     const [isEditing, setIsEditing] = useState(false);
     const [editedName, setEditedName] = useState(item.name);
+    const [showConfirmation, setShowConfirmation] = useState(false);
     const dragButtonRef = useRef(null);
 
-    // Reset dragged state when drag ends
     useEffect(() => {
         const handleDragEnd = () => {
             if (dragButtonRef.current) {
@@ -70,14 +71,10 @@ const TreeNode = ({
         if (e.key === 'Enter') {
             e.preventDefault();
             if (editedName.trim() !== '' && editedName !== item.name) {
-                // Ask for confirmation
-                if (window.confirm(`Do you want to change "${item.name}" to "${editedName}"?`)) {
-                    updateCategoryName(item.id, editedName);
-                } else {
-                    setEditedName(item.name); // Reset to original name
-                }
+                setShowConfirmation(true);
+            } else {
+                setIsEditing(false);
             }
-            setIsEditing(false);
         } else if (e.key === 'Escape') {
             e.preventDefault();
             setEditedName(item.name); // Reset to original name
@@ -87,14 +84,10 @@ const TreeNode = ({
 
     const handleSaveEdit = () => {
         if (editedName.trim() !== '' && editedName !== item.name) {
-            // Ask for confirmation
-            if (window.confirm(`Do you want to change "${item.name}" to "${editedName}"?`)) {
-                updateCategoryName(item.id, editedName);
-            } else {
-                setEditedName(item.name); // Reset to original name
-            }
+            setShowConfirmation(true);
+        } else {
+            setIsEditing(false);
         }
-        setIsEditing(false);
     };
 
     const handleCancelEdit = () => {
@@ -102,8 +95,27 @@ const TreeNode = ({
         setIsEditing(false);
     };
 
+    const handleConfirmNameChange = () => {
+        updateCategoryName(item.id, editedName);
+        setShowConfirmation(false);
+        setIsEditing(false);
+    };
+
+    const handleCancelNameChange = () => {
+        setShowConfirmation(false);
+    };
+
     return (
         <div key={item.id} className={isThisItemDragged && isDragging ? 'opacity-50' : ''}>
+            {/* Confirmation Modal */}
+            <Modal
+                isOpen={showConfirmation}
+                title="Confirm Category Rename"
+                message={`Do you want to change "${item.name}" to "${editedName}"?`}
+                onConfirm={handleConfirmNameChange}
+                onCancel={handleCancelNameChange}
+            />
+
             <div
                 className={`flex items-center p-2 rounded-md mb-1 
                     ${showDropTargetHighlight ? 'bg-blue-100 border-2 border-blue-500' : ''}
