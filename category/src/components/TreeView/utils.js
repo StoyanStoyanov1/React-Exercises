@@ -96,26 +96,36 @@ export const updateExpandedState = (items, id) => {
 export const filterTreeBySearchTerm = (items, searchTerm) => {
     if (!searchTerm.trim()) return items;
 
-    return items.reduce((filtered, item) => {
-        const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
-
-        if (matchesSearch) {
-            return [...filtered, {
-                ...item,
-                expanded: true
-            }];
+    const containsMatch = (item, term) => {
+        if (item.name.toLowerCase().includes(term.toLowerCase())) {
+            return true;
         }
 
         if (item.children && item.children.length > 0) {
+            return item.children.some(child => containsMatch(child, term));
+        }
+
+        return false;
+    };
+
+    return items.reduce((filtered, item) => {
+        const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const hasMatchingChildren = item.children &&
+            item.children.length > 0 &&
+            item.children.some(child => containsMatch(child, searchTerm));
+
+        if (matchesSearch) {
+            return [...filtered, {
+                ...item
+            }];
+        } else if (hasMatchingChildren) {
             const filteredChildren = filterTreeBySearchTerm(item.children, searchTerm);
 
-            if (filteredChildren.length > 0) {
-                return [...filtered, {
-                    ...item,
-                    expanded: true,
-                    children: filteredChildren
-                }];
-            }
+            return [...filtered, {
+                ...item,
+                expanded: item.expanded,
+                children: filteredChildren
+            }];
         }
 
         return filtered;
