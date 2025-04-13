@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, ChevronRight, Move, Plus, Check, X } from 'lucide-react';
 import { countAllDescendants } from './utils';
 
@@ -22,6 +22,22 @@ const TreeNode = ({
     const isThisItemDragged = draggedItem?.id === item.id;
     const [isEditing, setIsEditing] = useState(false);
     const [editedName, setEditedName] = useState(item.name);
+    const dragButtonRef = useRef(null);
+
+    // Reset dragged state when drag ends
+    useEffect(() => {
+        const handleDragEnd = () => {
+            if (dragButtonRef.current) {
+                dragButtonRef.current.blur();
+            }
+        };
+
+        window.addEventListener('dragend', handleDragEnd);
+
+        return () => {
+            window.removeEventListener('dragend', handleDragEnd);
+        };
+    }, []);
 
     const isValidDropTarget = !(
         !draggedItem ||
@@ -58,7 +74,7 @@ const TreeNode = ({
                 if (window.confirm(`Do you want to change "${item.name}" to "${editedName}"?`)) {
                     updateCategoryName(item.id, editedName);
                 } else {
-                    setEditedName(item.name);
+                    setEditedName(item.name); // Reset to original name
                 }
             }
             setIsEditing(false);
@@ -75,7 +91,7 @@ const TreeNode = ({
             if (window.confirm(`Do you want to change "${item.name}" to "${editedName}"?`)) {
                 updateCategoryName(item.id, editedName);
             } else {
-                setEditedName(item.name);
+                setEditedName(item.name); // Reset to original name
             }
         }
         setIsEditing(false);
@@ -182,9 +198,16 @@ const TreeNode = ({
                             <Plus size={16} />
                         </button>
                         <button
-                            className="p-1.5 bg-gray-800 hover:bg-gray-700 rounded-md text-white transition-all shadow-sm cursor-grab active:cursor-grabbing"
+                            ref={dragButtonRef}
+                            className="p-1.5 bg-gray-800 hover:bg-gray-700 rounded-md text-white transition-all shadow-sm cursor-grab active:cursor-grabbing focus:ring-2 focus:ring-blue-500"
                             draggable="true"
                             onDragStart={(e) => handleDragStart(e, item)}
+                            onDragEnd={(e) => {
+                                // Explicitly remove focus when drag ends
+                                if (dragButtonRef.current) {
+                                    dragButtonRef.current.blur();
+                                }
+                            }}
                             onClick={(e) => e.stopPropagation()}
                         >
                             <Move size={16} />
