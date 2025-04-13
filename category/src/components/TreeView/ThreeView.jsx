@@ -135,13 +135,18 @@ const TreeView = ({ data, title = "Title" }) => {
 
         const { item, parent } = findItemAndParent(currentData, id);
         if (item) {
-            // Track this deletion
-            setDeletedCategories(prev => [...prev, {
+            // Track this deletion and log it immediately
+            const deletedCategory = {
                 id,
                 name: item.name,
                 parentId: parent ? parent.id : null,
                 parentName: parent ? parent.name : 'Root'
-            }]);
+            };
+
+            console.log("--- DELETED CATEGORY ---");
+            console.log(deletedCategory);
+
+            setDeletedCategories(prev => [...prev, deletedCategory]);
         }
 
         const newData = cloneTreeWithoutItem(currentData, id);
@@ -168,7 +173,11 @@ const TreeView = ({ data, title = "Title" }) => {
 
         const currentItem = findItem(currentData, id);
         if (currentItem) {
-            // Track this modification
+            // Track this modification and log it immediately
+            const modification = { id, oldName: currentItem.name, newName };
+            console.log("--- MODIFIED CATEGORY ---");
+            console.log(modification);
+
             setModifiedCategories(prev => {
                 // Check if this category was already modified
                 const existingIndex = prev.findIndex(item => item.id === id);
@@ -183,7 +192,7 @@ const TreeView = ({ data, title = "Title" }) => {
                     return updatedModifications;
                 } else {
                     // Add a new entry
-                    return [...prev, { id, oldName: currentItem.name, newName }];
+                    return [...prev, modification];
                 }
             });
         }
@@ -213,13 +222,18 @@ const TreeView = ({ data, title = "Title" }) => {
 
         if (parentId && !parent) return;
 
-        // Track this addition
-        setAddedCategories(prev => [...prev, {
+        // Track this addition and log it immediately
+        const newCategory = {
             id: newCategoryId,
             name: categoryName,
             parentId: parentId,
             parentName: parent ? parent.name : 'Root'
-        }]);
+        };
+
+        console.log("--- ADDED CATEGORY ---");
+        console.log(newCategory);
+
+        setAddedCategories(prev => [...prev, newCategory]);
 
         if (parentId) {
             const updateParentChildren = (items) => {
@@ -353,15 +367,20 @@ const TreeView = ({ data, title = "Title" }) => {
             "Confirm Move",
             `Are you sure you want to move "${draggedItem.name}" to "${target.name}"?`,
             () => {
-                // Track this move
-                setMovedCategories(prev => [...prev, {
+                // Track this move and log it immediately
+                const movedCategory = {
                     id: draggedItem.id,
                     name: draggedItem.name,
                     fromParentId: currentParent ? currentParent.id : null,
                     fromParentName: currentParent ? currentParent.name : 'Root',
                     toParentId: target.id,
                     toParentName: target.name
-                }]);
+                };
+
+                console.log("--- MOVED CATEGORY ---");
+                console.log(movedCategory);
+
+                setMovedCategories(prev => [...prev, movedCategory]);
 
                 const dataWithoutDragged = cloneTreeWithoutItem(currentData, draggedItem.id);
 
@@ -444,15 +463,20 @@ const TreeView = ({ data, title = "Title" }) => {
                 const existsAtRoot = currentData.some(item => item.id === draggedItem.id);
 
                 if (!existsAtRoot) {
-                    // Track this move to root
-                    setMovedCategories(prev => [...prev, {
+                    // Track this move to root and log it immediately
+                    const movedToRootCategory = {
                         id: draggedItem.id,
                         name: draggedItem.name,
                         fromParentId: currentParent ? currentParent.id : null,
                         fromParentName: currentParent ? currentParent.name : 'Root',
                         toParentId: null,
                         toParentName: 'Root'
-                    }]);
+                    };
+
+                    console.log("--- MOVED CATEGORY TO ROOT ---");
+                    console.log(movedToRootCategory);
+
+                    setMovedCategories(prev => [...prev, movedToRootCategory]);
 
                     const newRootItem = JSON.parse(JSON.stringify(draggedItem));
                     const color = getColorFromPalette(currentData.length);
@@ -523,41 +547,6 @@ const TreeView = ({ data, title = "Title" }) => {
 
     const isFilterActive = appliedCategoryFilter.length < currentData.length;
 
-    // Handle saving all changes to the database
-    const handleSaveChanges = () => {
-        console.log("--- MODIFIED CATEGORIES ---");
-        console.log(modifiedCategories);
-
-        console.log("--- MOVED CATEGORIES ---");
-        console.log(movedCategories);
-
-        console.log("--- ADDED CATEGORIES ---");
-        console.log(addedCategories);
-
-        console.log("--- DELETED CATEGORIES ---");
-        console.log(deletedCategories);
-
-        // Check if there are any changes to save
-        const hasChanges =
-            modifiedCategories.length > 0 ||
-            movedCategories.length > 0 ||
-            addedCategories.length > 0 ||
-            deletedCategories.length > 0;
-
-        if (hasChanges) {
-            alert("Changes saved successfully!");
-            // Here you would typically send the changes to your backend
-
-            // Reset tracking arrays after saving
-            setModifiedCategories([]);
-            setMovedCategories([]);
-            setAddedCategories([]);
-            setDeletedCategories([]);
-        } else {
-            alert("No changes to save.");
-        }
-    };
-
     return (
         <div className="w max-w-3xl bg-white rounded-lg shadow-md p-4">
             <Modal
@@ -600,22 +589,6 @@ const TreeView = ({ data, title = "Title" }) => {
                     >
                         <Plus size={18} />
                     </button>
-                    {/* Save Changes Button - Only visible when there are changes */}
-                    {(modifiedCategories.length > 0 || movedCategories.length > 0 ||
-                        addedCategories.length > 0 || deletedCategories.length > 0) && (
-                        <button
-                            className="mr-2 flex items-center px-3 py-2 rounded-md bg-green-600 hover:bg-green-700 text-white transition-colors"
-                            onClick={handleSaveChanges}
-                            title="Save all changes"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                                <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                                <polyline points="7 3 7 8 15 8"></polyline>
-                            </svg>
-                            <span className="text-sm font-medium">Save Changes</span>
-                        </button>
-                    )}
                     <button
                         className={`flex items-center px-3 py-2 rounded-md hover:bg-blue-600 text-white transition-colors ${isFilterActive ? 'bg-blue-600' : 'bg-blue-500'}`}
                         onClick={() => setIsFilterOpen(true)}
